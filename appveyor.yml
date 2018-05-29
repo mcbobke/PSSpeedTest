@@ -7,7 +7,7 @@ clone_folder: C:\projects\PSSpeedTest
 
 environment:
   NugetApiKey:
-    secure: *
+    secure: kOgZxMM1AhKYpVnXZzLb/0xSMX68V/484bi3hCp5ZWsqjpuWBvGw8e5/6Uyw5aGb
 
 cache:
   - _build_dependencies_ -> *.Depend.psd1
