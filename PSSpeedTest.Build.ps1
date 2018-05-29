@@ -2,7 +2,7 @@ Param(
     $VersionIncrement = 'Patch'
 )
 
-Task Default InstallDependencies, Build, Test, Distribute
+Task Default Build, Test, Distribute
 Task Build CopyOutput, BuildPSD1
 
 function PublishTestResults {
@@ -52,21 +52,6 @@ Enter-Build {
 
 Task Clean {
     Remove-Item -Path $Output -Recurse -ErrorAction Ignore | Out-Null
-}
-
-Task InstallDependencies {
-    if (!(Get-PackageProvider -Name 'NuGet')) {
-        Write-Output "Installing Nuget package provider..."
-        Install-PackageProvider -Name 'NuGet' -Force -Confirm:$false | Out-Null
-    }
-
-    Write-Output "Install/Import Build-Dependent Modules"
-    $PSDependVersion = '0.2.3'
-    if (!(Get-InstalledModule -Name 'PSDepend' -RequiredVersion $PSDependVersion -ErrorAction 'SilentlyContinue')) {
-        Install-Module -Name 'PSDepend' -RequiredVersion $PSDependVersion -Force -Scope 'CurrentUser'
-    }
-    Import-Module -Name 'PSDepend' -RequiredVersion $PSDependVersion
-    Invoke-PSDepend -Path "$PSScriptRoot\build.Depend.psd1" -Install -Import -Force
 }
 
 Task CopyOutput {
