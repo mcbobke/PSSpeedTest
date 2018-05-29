@@ -1,0 +1,18 @@
+skip_commits:
+  message: /Updated (readme|docs).*/
+
+image: Visual Studio 2017
+
+clone_folder: C:\projects\PSSpeedTest
+
+environment:
+  NugetApiKey:
+    secure: *
+
+cache:
+  - _build_dependencies_ -> *.Depend.psd1
+
+build: off
+
+test_script:
+  - ps: . .\build.ps1
