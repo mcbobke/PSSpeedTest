@@ -1,6 +1,8 @@
-{
-    "localServer" : {
+{   "defaultPort"       : "5201",
+    "defaultDest"       : "local",
+    "defaultLocalServer": {
         "defaultServer" : "null",
         "defaultPort"   : "null"
-    }
+    },
+    "configuredServers" : {}
 }

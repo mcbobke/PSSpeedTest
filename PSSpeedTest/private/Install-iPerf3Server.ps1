@@ -8,11 +8,14 @@
     .PARAMETER ComputerName
     The name of the network computer that will act as an iPerf3 server.
 
+    .PARAMETER Port
+    The port number that the iPerf3 server will listen on.
+
     .PARAMETER Credential
     Network credentials used to authenticate to the network computer.
 
     .EXAMPLE
-    Install-iPerf3Server -ComputerName SERVER01 -Credential domain\user
+    Install-iPerf3Server -ComputerName SERVER01 -Port 5201 -Credential domain\user
 #>
 
 function Install-iPerf3Server {
@@ -22,11 +25,13 @@ function Install-iPerf3Server {
         [ValidateNotNullOrEmpty()]
         [String]
         $ComputerName,
-        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $Port,
         [ValidateNotNullOrEmpty()]
         [PSCredential]
         $Credential
     )
     
-    Write-Output 'This cmdlet is not yet implemented!'
+    Write-Host 'This cmdlet is not yet implemented!'
 }
