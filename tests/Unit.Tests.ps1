@@ -17,57 +17,57 @@ Describe "Unit tests for $Script:ModuleName" {
 
     Context "Invoke-SpeedTest" {
         It "Should throw an error if Server and Port parameters are used but empty" {
-            Invoke-SpeedTest -Server "" -Port "" | Should -Throw
+            {Invoke-SpeedTest -Server "" -Port ""} | Should -Throw
         }
 
         It "Should throw an error if Server parameter is used but empty" {
-            Invoke-SpeedTest -Server "" -Port "5201" | Should -Throw
+            {Invoke-SpeedTest -Server "" -Port "5201"} | Should -Throw
         }
 
         It "Should throw an error if Port parameter is used but empty" {
-            Invoke-SpeedTest -Server "local.domain.com" -Port "" | Should -Throw
+            {Invoke-SpeedTest -Server "local.domain.com" -Port ""} | Should -Throw
         }
 
         It "Should throw an error if Server and Port parameters are used but null" {
-            Invoke-SpeedTest -Server $null -Port $null | Should -Throw
+            {Invoke-SpeedTest -Server $null -Port $null} | Should -Throw
         }
 
         It "Should throw an error if Server parameter is used but null" {
-            Invoke-SpeedTest -Server $null -Port "5201" | Should -Throw
+            {Invoke-SpeedTest -Server $null -Port "5201"} | Should -Throw
         }
 
         It "Should throw an error if Port parameter is used but null" {
-            Invoke-SpeedTest -Server "local.domain.com" -Port $null | Should -Throw
+            {Invoke-SpeedTest -Server "local.domain.com" -Port $null} | Should -Throw
         }
     }
 
     Context "Install-SpeedTestServer" {
         It "Should throw an error if ComputerName parameter is not used" {
-            Invoke-SpeedTest -Port "5201" -Credential $TestCredential | Should -Throw
+            {Install-SpeedTestServer -Port "5201" -Credential $TestCredential} | Should -Throw
         }
 
         It "Should throw an error if ComputerName parameter is used but empty" {
-            Invoke-SpeedTest -ComputerName "" -Port "5201" -Credential $TestCredential | Should -Throw
+            {Install-SpeedTestServer -ComputerName "" -Port "5201" -Credential $TestCredential} | Should -Throw
         }
 
         It "Should throw an error if Port parameter is used but empty" {
-            Invoke-SpeedTest -ComputerName "local.domain.com" -Port "" -Credential $TestCredential | Should -Throw
+            {Install-SpeedTestServer -ComputerName "local.domain.com" -Port "" -Credential $TestCredential} | Should -Throw
         }
 
         It "Should throw an error if Credential parameter is used but empty" {
-            Invoke-SpeedTest -ComputerName "local.domain.com" -Port "5201" -Credential "" | Should -Throw
+            {Install-SpeedTestServer -ComputerName "local.domain.com" -Port "5201" -Credential ""} | Should -Throw
         }
 
         It "Should throw an error if ComputerName parameter is used but null" {
-            Invoke-SpeedTest -ComputerName $null -Port "5201" -Credential $TestCredential | Should -Throw
+            {Install-SpeedTestServer -ComputerName $null -Port "5201" -Credential $TestCredential} | Should -Throw
         }
 
         It "Should throw an error if Port parameter is used but null" {
-            Invoke-SpeedTest -ComputerName "local.domain.com" -Port $null -Credential $TestCredential | Should -Throw
+            {Install-SpeedTestServer -ComputerName "local.domain.com" -Port $null -Credential $TestCredential} | Should -Throw
         }
 
         It "Should throw an error if Credential parameter is used but null" {
-            Invoke-SpeedTest -ComputerName "local.domain.com" -Port "5201" -Credential $null | Should -Throw
+            {Install-SpeedTestServer -ComputerName "local.domain.com" -Port "5201" -Credential $null} | Should -Throw
         }
     }
 
