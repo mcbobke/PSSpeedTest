@@ -12,10 +12,10 @@
     An example of this function's usage.
 #>
 
-function FunctionTemplate {
+function Start-SpeedTest {
     [CmdletBinding()]
     Param (
-        $Template
     )
-    return $null;
+
+    Write-Output 'This cmdlet is not yet implemented!'
 }
