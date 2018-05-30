@@ -91,7 +91,7 @@ Task BuildPSM1 -Inputs (Get-ChildItem -Path $Script:Source -Recurse -Include '*.
     [void]$StringBuilder.AppendLine("Export-ModuleMember -Function `$publicFunctions")
     
     Write-Output " BuildPSM1 Task - Creating module [$Script:ModulePath]"
-    Set-Content -Path $ModulePath -Value $stringbuilder.ToString() 
+    Set-Content -Path $Script:ModulePath -Value $stringbuilder.ToString() 
 }
 
 Task BuildPSD1 {
