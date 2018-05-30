@@ -3,7 +3,7 @@ Param(
 )
 
 Task Default Build, Test, Distribute
-Task Build CopyOutput, BuildPSD1
+Task Build CopyOutput, BuildPSM1, BuildPSD1
 
 function PublishTestResults {
     Param (
@@ -60,7 +60,7 @@ Task CopyOutput {
 
     Write-Output "Files and directories to be copied from source [$Script:Source]"
     Get-ChildItem -Path $Script:Source -File | `
-        Where-Object -Property Name -NotMatch "$Script:ModuleName\.ps[d]1" | `
+        Where-Object -Property Name -NotMatch "$Script:ModuleName\.ps[md]1" | `
         Copy-Item -Destination $Script:Destination -Force -PassThru | `
         ForEach-Object {"Creating file [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
 
@@ -69,11 +69,36 @@ Task CopyOutput {
         ForEach-Object {"Creating directory (recursive) [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
 }
 
+Task BuildPSM1 -Inputs (Get-ChildItem -Path $Script:Source -Recurse -Include '*.ps1') -Outputs $Script:ModulePath {
+
+    [System.Text.StringBuilder]$StringBuilder = [System.Text.StringBuilder]::new()
+    foreach ($folder in $Script:Imports)
+    {
+        [void]$StringBuilder.AppendLine("Write-Verbose 'Importing from [`$PSScriptRoot\`$folder]'")
+        if (Test-Path "$Script:Source\$folder")
+        {
+            $fileList = Get-ChildItem "$Script:Source\$folder" -Include '*.ps1'
+            foreach ($file in $fileList)
+            {
+                $importName = "$folder\$($file.Name)"
+                Write-Output "  BuildPSM1 Task - Found $importName"
+                [void]$StringBuilder.AppendLine( ".\$importName" )
+            }
+        }
+    }
+
+    [void]$StringBuilder.AppendLine("`$publicFunctions = (Get-ChildItem -Path `"`$PSScriptRoot\public`" -Filter '*.ps1').BaseName")
+    [void]$StringBuilder.AppendLine("Export-ModuleMember -Function `$publicFunctions")
+    
+    Write-Output " BuildPSM1 Task - Creating module [$Script:ModulePath]"
+    Set-Content -Path $ModulePath -Value $stringbuilder.ToString() 
+}
+
 Task BuildPSD1 {
     Write-Output "Updating [$Script:ManifestPath]"
     Copy-Item "$Script:Source\$ModuleName.psd1" -Destination $Script:ManifestPath
 
-    $moduleFunctions = Get-ChildItem "$Script:Source\public\*.ps1" | `
+    $moduleFunctions = Get-ChildItem "$Script:Source\public" -Include '*.ps1' | `
         Select-Object -ExpandProperty BaseName
     Set-ModuleFunctions -Name $Script:ManifestPath -FunctionsToExport $moduleFunctions
     Set-ModuleAliases -Name $Script:ManifestPath
