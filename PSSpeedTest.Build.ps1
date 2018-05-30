@@ -55,19 +55,19 @@ Task Clean {
 }
 
 Task CopyOutput {
-    Write-Output "Creating directory [$Script:Destination]"
+    Write-Output "  Creating directory [$Script:Destination]"
     New-Item -Type Directory -Path $Script:Destination -ErrorAction Ignore | Out-Null
 
-    Write-Output "Files and directories to be copied from source [$Script:Source]"
+    Write-Output "  Files and directories to be copied from source [$Script:Source]"
 
     Get-ChildItem -Path $Script:Source -File | `
         Where-Object -Property Name -NotMatch "$Script:ModuleName\.ps[md]1" | `
         Copy-Item -Destination $Script:Destination -Force -PassThru | `
-        ForEach-Object {"Creating file [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
+        ForEach-Object {"   Creating file [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
 
     Get-ChildItem -Path $Script:Source -Directory | `
         Copy-Item -Destination $Script:Destination -Recurse -Force -PassThru | `
-        ForEach-Object {"Creating directory (recursive) [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
+        ForEach-Object {"   Creating directory (recursive) [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
 }
 
 Task BuildPSM1 {
@@ -81,7 +81,7 @@ Task BuildPSM1 {
             foreach ($file in $fileList)
             {
                 $importName = "$folder\$($file.Name)"
-                Write-Output "  BuildPSM1 Task - Found $importName"
+                Write-Output "  Found $importName"
                 [void]$StringBuilder.AppendLine( ". `"`$PSScriptRoot\$importName`"")
             }
         }
@@ -90,12 +90,12 @@ Task BuildPSM1 {
     [void]$StringBuilder.AppendLine("`$publicFunctions = (Get-ChildItem -Path `"`$PSScriptRoot\public`" -Filter '*.ps1').BaseName")
     [void]$StringBuilder.AppendLine("Export-ModuleMember -Function `$publicFunctions")
     
-    Write-Output "  BuildPSM1 Task - Creating module [$Script:ModulePath]"
+    Write-Output "  Creating module [$Script:ModulePath]"
     Set-Content -Path $Script:ModulePath -Value $stringbuilder.ToString() 
 }
 
 Task BuildPSD1 {
-    Write-Output "Updating [$Script:ManifestPath]"
+    Write-Output "  Updating [$Script:ManifestPath]"
     Copy-Item "$Script:Source\$ModuleName.psd1" -Destination $Script:ManifestPath
 
     $moduleFunctions = Get-ChildItem "$Script:Source\public" -Filter '*.ps1' | `
@@ -108,7 +108,7 @@ Task BuildPSD1 {
         $VersionIncrement = $Matches[1]
     }
     $newVersion = [Version](Step-Version -Version $currentVersion -By $VersionIncrement)
-    Write-Output "Stepping module from current version [$currentVersion] to new version [$newVersion] by [$VersionIncrement]"
+    Write-Output "  Stepping module from current version [$currentVersion] to new version [$newVersion] by [$VersionIncrement]"
     Update-Metadata -Path $Script:ManifestPath -PropertyName 'ModuleVersion' -Value $newVersion
 }
 
@@ -140,9 +140,9 @@ Task Distribute {
         Invoke-PSDeploy @DeployParams
     }
     else {
-        Write-Output "Skipping deployment:"
-        Write-Output "Build system: $Env:BHBuildSystem"
-        Write-Output "Current branch (should be master): $Env:BHBranchName"
-        Write-Output "Commit message (should include '!deploy'): $Env:BHCommitMessage"
+        Write-Output "  Skipping deployment:"
+        Write-Output "  Build system: $Env:BHBuildSystem"
+        Write-Output "  Current branch (should be master): $Env:BHBranchName"
+        Write-Output "  Commit message (should include '!deploy'): $Env:BHCommitMessage"
     }
 }
