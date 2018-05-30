@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-    A brief description of this function.
+    Starts a bandwidth test over the internet or on the local private network.
 
     .DESCRIPTION
-    A detailed description of this function.
+    Starts a bandwidth test with iPerf over the internet against a public iPerf server, or on the local private network against a previously-configured iPerf server.
 
     .PARAMETER Template
     A description of a parameter.
