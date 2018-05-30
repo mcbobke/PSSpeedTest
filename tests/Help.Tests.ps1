@@ -1,6 +1,6 @@
 $Script:ModuleRoot = Resolve-Path "$PSScriptRoot\..\$Env:BHProjectName"
 $Script:ModuleName = Split-Path $Script:ModuleRoot -Leaf
-$scripts = Get-ChildItem $Script:ModuleRoot -Include *.ps1 -Recurse
+$scripts = Get-ChildItem $Script:ModuleRoot -Filter '*.ps1' -Recurse
 
 Describe "Function Help tests for $Script:ModuleName" {
     BeforeAll {

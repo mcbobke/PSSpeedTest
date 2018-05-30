@@ -12,7 +12,7 @@
     Network credentials used to authenticate to the network computer.
 
     .EXAMPLE
-    Setup-iPerf3Server -ComputerName SERVER01 -Credential domain\user
+    Install-iPerf3Server -ComputerName SERVER01 -Credential domain\user
 #>
 
 function Install-iPerf3Server {

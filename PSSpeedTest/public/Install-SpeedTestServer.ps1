@@ -14,7 +14,7 @@
     Network credentials used to authenticate to the network computer.
 
     .EXAMPLE
-    Make-SpeedTestServer -ComputerName SERVER01 -Credential domain\user
+    Install-SpeedTestServer -ComputerName SERVER01 -Credential domain\user
 #>
 
 function Install-SpeedTestServer {
