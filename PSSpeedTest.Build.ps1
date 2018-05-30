@@ -69,8 +69,7 @@ Task CopyOutput {
         ForEach-Object {"Creating directory (recursive) [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
 }
 
-Task BuildPSM1 -Inputs (Get-ChildItem -Path $Script:Source -Recurse -Include '*.ps1') -Outputs $Script:ModulePath {
-
+Task BuildPSM1 {
     [System.Text.StringBuilder]$StringBuilder = [System.Text.StringBuilder]::new()
     foreach ($folder in $Script:Imports)
     {
