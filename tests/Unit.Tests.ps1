@@ -39,6 +39,10 @@ Describe "Unit tests for $Script:ModuleName" {
         It "Should throw an error if Port parameter is used but null" {
             {Invoke-SpeedTest -Server "local.domain.com" -Port $null} | Should -Throw
         }
+
+        It "Should throw an error if Port parameter is used but Server is not" {
+            {Invoke-SpeedTest -Port "5201"} | Should -Throw
+        }
     }
 
     Context "Install-SpeedTestServer" {
