@@ -33,7 +33,7 @@ Copyright = '(c) 2018 Matthew Bobke. All rights reserved.'
 Description = 'A module for testing network bandwidth over the internet as well as private networks.'
 
 # Minimum version of the Windows PowerShell engine required by this module
-# PowerShellVersion = ''
+PowerShellVersion = '5.1'
 
 # Name of the Windows PowerShell host required by this module
 # PowerShellHostName = ''
@@ -95,13 +95,13 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @('SpeedTest', 'Windows', 'Test', 'Network')
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://raw.githubusercontent.com/mcbobke/PSSpeedTest/master/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/mcbobke/PSSpeedTest'
 
         # A URL to an icon representing this module.
         # IconUri = ''
