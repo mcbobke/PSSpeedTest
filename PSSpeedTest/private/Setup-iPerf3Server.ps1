@@ -1,6 +1,6 @@
 <#
     .SYNOPSIS
-    Sets up iPerf3 on a domain-accessible server.
+    Installs and sets up iPerf3 on a domain-accessible server.
 
     .DESCRIPTION
     Uses remoting to install the latest version of iPerf3 as a service on a network computer, running it as a server service.
@@ -28,5 +28,5 @@ function Setup-iPerf3Server {
         $Credential
     )
     
-    return $null;
+    Write-Output 'This cmdlet is not yet implemented!'
 }
