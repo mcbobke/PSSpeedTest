@@ -15,7 +15,7 @@
     Setup-iPerf3Server -ComputerName SERVER01 -Credential domain\user
 #>
 
-function Setup-iPerf3Server {
+function Install-iPerf3Server {
     [CmdletBinding()]
     Param (
         [Parameter(Mandatory = $true)]

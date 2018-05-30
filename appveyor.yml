@@ -1,6 +1,8 @@
 skip_commits:
   message: /Updated (readme|docs).*|!skipci/
 
+skip_branch_with_pr: true
+
 image: Visual Studio 2017
 
 clone_folder: C:\projects\PSSpeedTest

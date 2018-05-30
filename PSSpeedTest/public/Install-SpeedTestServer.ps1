@@ -17,7 +17,7 @@
     Make-SpeedTestServer -ComputerName SERVER01 -Credential domain\user
 #>
 
-function Make-SpeedTestServer {
+function Install-SpeedTestServer {
     [CmdletBinding()]
     Param (
         [Parameter(Mandatory = $true)]

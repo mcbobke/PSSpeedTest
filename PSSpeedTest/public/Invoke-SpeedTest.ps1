@@ -12,7 +12,7 @@
     An example of this function's usage.
 #>
 
-function Start-SpeedTest {
+function Invoke-SpeedTest {
     [CmdletBinding()]
     Param (
     )
