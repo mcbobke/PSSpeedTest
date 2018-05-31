@@ -1,5 +1,5 @@
-$Script:ModuleRoot = Resolve-Path "$PSScriptRoot\..\$Env:BHProjectName"
-$Script:ModuleName = Split-Path $moduleRoot -Leaf
+$Script:ModuleRoot = Resolve-Path "$PSScriptRoot\..\output\$Env:BHProjectName"
+$Script:ModuleName = Split-Path $Script:ModuleRoot -Leaf
 $Script:PrivateFunctionPath = "$Script:ModuleRoot\private"
 
 foreach ($script in (Get-ChildItem -Path $Script:PrivateFunctionPath)) {

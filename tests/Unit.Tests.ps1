@@ -1,5 +1,5 @@
 $Script:ModuleRoot = Resolve-Path "$PSScriptRoot\..\output\$Env:BHProjectName"
-$Script:ModuleName = Split-Path $moduleRoot -Leaf
+$Script:ModuleName = Split-Path $Script:ModuleRoot -Leaf
 $Script:ConfigPath = Join-Path -Path $Script:ModuleRoot -ChildPath "config.json"
 $TestPassword = ConvertTo-SecureString -String "Test123" -AsPlainText -Force
 $TestCredential = New-Object -TypeName "System.Management.Automation.PSCredential" -ArgumentList ("Test123", $TestPassword)
