@@ -1,8 +1,8 @@
-$Script:ModuleRoot = Resolve-Path "$PSScriptRoot\..\$Env:BHProjectName"
+$Script:ModuleRoot = Resolve-Path "$PSScriptRoot\..\output\$Env:BHProjectName"
 $Script:ModuleName = Split-Path $moduleRoot -Leaf
 $Script:ConfigPath = Join-Path -Path $Script:ModuleRoot -ChildPath "config.json"
 $TestPassword = ConvertTo-SecureString -String "Test123" -AsPlainText -Force
-$TestCredential = New-Object -TypeName "System.Management.Automation.PSCredential" -ArgumentList ("Test123",$TestPassword)
+$TestCredential = New-Object -TypeName "System.Management.Automation.PSCredential" -ArgumentList ("Test123", $TestPassword)
 
 function Reset-Configuration {
     $config = Get-Content -Path $Script:ConfigPath | ConvertFrom-Json
@@ -40,7 +40,8 @@ Describe "Unit tests for $Script:ModuleName" {
                 {Get-SpeedTestConfig} | Should -Throw
             }
             finally {
-                Rename-Item -Path "$Script:ModuleRoot\configrename.json" -NewName "config.json" -Force
+                Rename-Item -Path "$Script:ModuleRoot\configrename.json" `
+                    -NewName "config.json" -Force
             }
         }
     }
@@ -57,7 +58,8 @@ Describe "Unit tests for $Script:ModuleName" {
         }
 
         It "Should not throw if all parameters are used" {
-            {Set-SpeedTestConfig -InternetServer "test.public.com" -InternetPort "7777" -LocalServer "test.local.com" -LocalPort "7777"} `
+            {Set-SpeedTestConfig -InternetServer "test.public.com" -InternetPort "7777" `
+                    -LocalServer "test.local.com" -LocalPort "7777"} `
                 | Should -Not -Throw
         }
 
@@ -201,7 +203,8 @@ Describe "Unit tests for $Script:ModuleName" {
         }
 
         It "Should not throw an error if ComputerName, Port, and Credential parameters are specified" {
-            {Install-SpeedTestServer -ComputerName "local.domain.com" -Port "7777" -Credential $TestCredential} | Should -Not -Throw
+            {Install-SpeedTestServer -ComputerName "local.domain.com" -Port "7777" -Credential $TestCredential} `
+                | Should -Not -Throw
         }
 
         It "Should throw an error if ComputerName parameter is used but empty" {
