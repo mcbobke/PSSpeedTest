@@ -1,35 +1,33 @@
 <#
     .SYNOPSIS
-    Configures a designated network computer as a private domain iPerf3 server.
+    Configures a designated domain computer as a private local iPerf3 server.
 
     .DESCRIPTION
-    Installs and configures iPerf3 as a constantly-listening service on a network computer,
-    and configures this computer to test bandwidth over the local network if 'Start-SpeedTest -LocalNetwork'
-    is run.
+    Configures iPerf3 as a constantly-listening service on a domain computer.
 
     .PARAMETER ComputerName
-    The name of the network computer that will act as an iPerf3 server.
+    The name of the local domain computer that will act as an iPerf3 server.
     
     .PARAMETER Port
     The port number that the iPerf3 server will listen on.
+    If not specified, the default port '5201' will be used.
 
     .PARAMETER Credential
-    Network credentials used to authenticate to the network computer.
+    Domain credentials used to authenticate to the domain computer, if necessary.
 
     .EXAMPLE
-    Install-SpeedTestServer -ComputerName SERVER01 -Credential domain\user
+    Need to write examples.
 #>
 
 function Install-SpeedTestServer {
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [String]
         $ComputerName,
         [ValidateNotNullOrEmpty()]
         [String]
-        $Port,
+        $Port = '5201',
         [ValidateNotNullOrEmpty()]
         [PSCredential]
         $Credential
