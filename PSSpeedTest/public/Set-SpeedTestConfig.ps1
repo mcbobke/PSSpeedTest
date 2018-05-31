@@ -66,5 +66,5 @@ function Set-SpeedTestConfig {
 
     $config `
         | ConvertTo-Json `
-        | Set-Content -Path "$((Get-Location).Path | Split-Path -Parent)\config.json"
+        | Set-Content -Path "$($PSScriptRoot | Split-Path -Parent)\config.json"
 }
