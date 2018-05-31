@@ -19,10 +19,8 @@ Mock Install-SpeedTestServer {return 0}
 
 Describe "Unit tests for $Script:ModuleName" {
     BeforeAll {
-        Import-Module $Global:TestThisModule
-    }
-    AfterAll {
         Get-Module -All -Name $Script:ModuleName | Remove-Module -Force -ErrorAction 'Ignore'
+        Import-Module $Global:TestThisModule
     }
     AfterEach {
         Reset-Configuration
