@@ -15,7 +15,7 @@ function Get-SpeedTestConfig {
     Param()
 
     try {
-        $config = Get-Content -Path "$($PSScriptRoot | Split-Path -Parent)\config.json"
+        $config = Get-Content -Path "$($PSScriptRoot | Split-Path -Parent)\config.json" -ErrorAction "Stop"
         return $config | ConvertFrom-Json
     }
     catch {

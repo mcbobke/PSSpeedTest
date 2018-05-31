@@ -27,7 +27,7 @@ function Install-iPerf3 {
     Write-Verbose -Message 'Importing ChocolateyGet package provider and installing iperf3.'
     try {
         Import-PackageProvider -Name 'ChocolateyGet'
-        $result = Install-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -Force
+        $result = Install-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -Force -ErrorAction "Stop"
         Write-Verbose -Message 'iPerf3 package installed.'
         return $result
     }
