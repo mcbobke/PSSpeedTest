@@ -1,17 +1,103 @@
 $Script:ModuleRoot = Resolve-Path "$PSScriptRoot\..\$Env:BHProjectName"
 $Script:ModuleName = Split-Path $moduleRoot -Leaf
+$Script:ConfigPath = Join-Path -Path $Script:ModuleRoot -ChildPath "config.json"
 $TestPassword = ConvertTo-SecureString -String "Test123" -AsPlainText -Force
 $TestCredential = New-Object -TypeName "System.Management.Automation.PSCredential" -ArgumentList ("Test123",$TestPassword)
 
+function Reset-Configuration {
+    $config = Get-Content -Path $Script:ConfigPath | ConvertFrom-Json
+    $config.defaultInternetServer.defaultServer = ""
+    $config.defaultInternetServer.defaultPort = ""
+    $config.defaultLocalServer.defaultServer = ""
+    $config.defaultLocalServer.defaultPort = ""
+    $config | ConvertTo-Json | Set-Content -Path $Script:ConfigPath
+}
+
 Describe "Unit tests for $Script:ModuleName" {
     BeforeAll {
-        Get-Module -All -Name $Script:ModuleName | Remove-Module -Force -ErrorAction 'Ignore'
+        Reset-Configuration
         Import-Module $Global:TestThisModule
     }
 
     Context "config.json" {
         It "config.json should be valid JSON" {
-            {Get-Content -Path "$Script:ModuleRoot\config.json" | ConvertFrom-Json} | Should -Not -Throw
+            {Get-Content -Path $Script:ConfigPath | ConvertFrom-Json} | Should -Not -Throw
+        }
+    }
+
+    Context "Get-SpeedTestConfig" {
+        It "Should return a valid object with expected items" {
+            $result = Get-SpeedTestConfig
+            $result.defaultLocalServer.defaultServer | Should -Exist
+            $result.defaultLocalServer.defaultPort | Should -Exist
+            $result.defaultInternetServer.defaultServer | Should -Exist
+            $result.defaultInternetServer.defaultPort | Should -Exist
+        }
+
+        It "Should throw if the expected file does not exist" {
+            try {
+                Rename-Item -Path $Script:ConfigPath -NewName "configrename.json" -Force
+                {Get-SpeedTestConfig} | Should -Throw
+            }
+            finally {
+                Rename-Item -Path "$Script:ModuleRoot\configrename.json" -NewName "config.json" -Force
+            }
+        }
+    }
+
+    Context "Set-SpeedTestConfig" {
+        It "Should not throw if InternetServer and InternetPort parameters are used" {
+            {Set-SpeedTestConfig -InternetServer "test.public.com" -InternetPort "7777"} `
+                | Should -Not -Throw
+        }
+
+        It "Should not throw if LocalServer and LocalPort parameters are used" {
+            {Set-SpeedTestConfig -LocalServer "test.local.com" -LocalPort "7777"} `
+                | Should -Not -Throw
+        }
+
+        It "Should not throw if all parameters are used" {
+            {Set-SpeedTestConfig -InternetServer "test.public.com" -InternetPort "7777" -LocalServer "test.local.com" -LocalPort "7777"} `
+                | Should -Not -Throw
+        }
+
+        It "Should not throw if InternetServer and LocalServer parameters are used" {
+            {Set-SpeedTestConfig -InternetServer "test.public.com" -LocalServer "test.local.com"} `
+                | Should -Not -Throw
+        }
+
+        It "Should not throw if InternetServer parameter is used on its own" {
+            {Set-SpeedTestConfig -InternetServer "test.public.com"} `
+                | Should -Not -Throw
+        }
+        
+        It "Should not throw if LocalServer parameter is used on its own" {
+            {Set-SpeedTestConfig -LocalServer "test.local.com"} `
+                | Should -Not -Throw
+        }
+
+        It "Should not throw if InternetPort parameter is used with a saved InternetServer" {
+            Set-SpeedTestConfig -InternetServer "test.public.com"
+            {Set-SpeedTestConfig -InternetPort "7777"} | Should -Not -Throw
+        }
+
+        It "Should not throw if LocalPort parameter is used with a saved LocalServer" {
+            Set-SpeedTestConfig -LocalServer "test.local.com"
+            {Set-SpeedTestConfig -LocalPort "7777"} | Should -Not -Throw
+        }
+
+        It "Should not throw if InternetPort and LocalPort parameters are used with both saved servers" {
+            Set-SpeedTestConfig -InternetServer "test.public.com"
+            Set-SpeedTestConfig -LocalServer "test.local.com"
+            {Set-SpeedTestConfig -InternetPort "7777" -LocalPort "7777"} | Should -Not -Throw
+        }
+
+        It "Should throw if InternetPort parameter is used without a saved InternetServer" {
+            {Set-SpeedTestConfig -InternetPort "7777"} | Should -Throw
+        }
+
+        It "Should throw if LocalPort parameter is used without a saved LocalServer" {
+            {Set-SpeedTestConfig -LocalPort "7777"} | Should -Throw
         }
     }
 
