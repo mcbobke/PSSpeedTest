@@ -15,8 +15,13 @@ function Reset-Configuration {
 
 Describe "Unit tests for $Script:ModuleName" {
     BeforeAll {
-        Reset-Configuration
         Import-Module $Global:TestThisModule
+    }
+    AfterAll {
+        Get-Module -All -Name $Script:ModuleName | Remove-Module -Force -ErrorAction 'Ignore'
+    }
+    AfterEach {
+        Reset-Configuration
     }
 
     Context "config.json" {
@@ -230,9 +235,5 @@ Describe "Unit tests for $Script:ModuleName" {
         It "Should throw an error if Credential parameter is used but null" {
             {Install-SpeedTestServer -ComputerName "local.domain.com" -Port "5201" -Credential $null} | Should -Throw
         }
-    }
-
-    AfterAll {
-        Get-Module -All -Name $Script:ModuleName | Remove-Module -Force -ErrorAction 'Ignore'
     }
 }

@@ -8,10 +8,6 @@ Describe "Function Help tests for $Script:ModuleName" {
         Import-Module $Global:TestThisModule
     }
 
-    AfterAll {
-        Get-Module -All -Name $Script:ModuleName | Remove-Module -Force -ErrorAction 'Ignore'
-    }
-
     It "Functions all have necessary comment-based help items" {
         foreach ($script in $scripts) {
             . $script.FullName
