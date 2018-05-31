@@ -57,7 +57,7 @@ Describe "Unit tests for $Script:ModuleName" {
         }
 
         It "Should throw an error if both Internet and Local parameters are used" {
-            {Invoke-SpeedTest -Internet -Local} | Should -Not -Throw
+            {Invoke-SpeedTest -Internet -Local} | Should -Throw
         }
 
         It "Should throw an error if Server and Port parameters are used but empty" {
