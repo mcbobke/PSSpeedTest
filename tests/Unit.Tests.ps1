@@ -28,10 +28,10 @@ Describe "Unit tests for $Script:ModuleName" {
     Context "Get-SpeedTestConfig" {
         It "Should return a valid object with expected items" {
             $result = Get-SpeedTestConfig
-            $result.defaultLocalServer.defaultServer | Should -Exist
-            $result.defaultLocalServer.defaultPort | Should -Exist
-            $result.defaultInternetServer.defaultServer | Should -Exist
-            $result.defaultInternetServer.defaultPort | Should -Exist
+            $result.defaultLocalServer.defaultServer | Should -BeNullOrEmpty
+            $result.defaultLocalServer.defaultPort | Should -BeNullOrEmpty
+            $result.defaultInternetServer.defaultServer | Should -BeNullOrEmpty
+            $result.defaultInternetServer.defaultPort | Should -BeNullOrEmpty
         }
 
         It "Should throw if the expected file does not exist" {
