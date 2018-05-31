@@ -13,11 +13,11 @@ function Reset-Configuration {
     $config | ConvertTo-Json | Set-Content -Path $Script:ConfigPath
 }
 
-# Mocking as these functions will eventually call over the network
-Mock Invoke-SpeedTest {return 0}
-Mock Install-SpeedTestServer {return 0}
-
 Describe "Unit tests for $Script:ModuleName" {
+    # Mocking as these functions will eventually call over the network
+    Mock Invoke-SpeedTest {return 0}
+    Mock Install-SpeedTestServer {return 0}
+    
     BeforeAll {
         Get-Module -All -Name $Script:ModuleName | Remove-Module -Force -ErrorAction 'Ignore'
         Import-Module $Global:TestThisModule
