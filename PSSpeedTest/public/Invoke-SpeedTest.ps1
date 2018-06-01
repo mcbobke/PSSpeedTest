@@ -107,6 +107,7 @@ function Invoke-SpeedTest {
     $resultsPS = $resultsJSON | ConvertFrom-Json
 
     if ($resultsPS.error) {
+        Write-Host "$($resultsPS.error)"
         throw "iPerf3 error occurred: $($resultsPS.error)"
     }
 

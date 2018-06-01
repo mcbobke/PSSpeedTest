@@ -6,7 +6,7 @@ foreach ($script in (Get-ChildItem -Path $Script:PrivateFunctionPath)) {
     . $script.FullName
 }
 
-Describe "Unit tests for $Script:ModuleName" {
+Describe "Private function tests for $Script:ModuleName" {
     It "Should install ChocolateyGet PackageProvider" {
         $result = Install-ChocolateyGetProvider
         $result.Name | Should -Be 'ChocolateyGet'
