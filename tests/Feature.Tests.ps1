@@ -23,20 +23,20 @@ Describe "Invoke-SpeedTest (Internet)" {
 
     It "Should successfully run a speed test against a valid public iPerf3 server with a saved configuration" {
         Set-SpeedTestConfig -InternetServer "iperf.scottlinux.com" -InternetPort "5201"
-        {Invoke-SpeedTest -Internet} | Should -Not -Throw
+        {Invoke-SpeedTest -Internet} | Should -Not -Throw "iPerf3 error occurred: error - unable to connect to server: "
     }
 
     It "Should successfully run a speed test against a valid public iPerf3 server with a saved configuration using default port '5201'" {
         Set-SpeedTestConfig -InternetServer "iperf.scottlinux.com"
-        {Invoke-SpeedTest -Internet} | Should -Not -Throw
+        {Invoke-SpeedTest -Internet} | Should -Not -Throw "iPerf3 error occurred: error - unable to connect to server: "
     }
 
     It "Should successfully run a speed test against a valid public iPerf3 server using specified Server/Port parameters" {
-        {Invoke-SpeedTest -Server "iperf.scottlinux.com" -Port "5201"} | Should -Not -Throw
+        {Invoke-SpeedTest -Server "iperf.scottlinux.com" -Port "5201"} | Should -Not -Throw "iPerf3 error occurred: error - unable to connect to server: "
     }
     
     It "Should successfully run a speed test against a valid public iPerf3 server using specified Server parameter and default port '5201'" {
-        {Invoke-SpeedTest -Server "iperf.scottlinux.com"} | Should -Not -Throw
+        {Invoke-SpeedTest -Server "iperf.scottlinux.com"} | Should -Not -Throw "iPerf3 error occurred: error - unable to connect to server: "
     }
 
     It "Should throw an error when running a speed test against an invalid public iPerf3 server with a saved configuration" {
