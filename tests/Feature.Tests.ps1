@@ -1,6 +1,7 @@
 $Script:ModuleRoot = Resolve-Path "$PSScriptRoot\..\output\$Env:BHProjectName"
 $Script:ModuleName = Split-Path $Script:ModuleRoot -Leaf
 $Script:ConfigPath = Join-Path -Path $Script:ModuleRoot -ChildPath "config.json"
+$Script:PrivateFunctionPath = "$Script:ModuleRoot\private"
 
 function Reset-Configuration {
     $config = Get-Content -Path $Script:ConfigPath | ConvertFrom-Json
@@ -15,6 +16,13 @@ Describe "Invoke-SpeedTest (Internet)" {
     BeforeAll {
         Get-Module -All -Name $Script:ModuleName | Remove-Module -Force -ErrorAction 'Ignore'
         Import-Module $Global:TestThisModule
+
+        foreach ($script in (Get-ChildItem -Path $Script:PrivateFunctionPath)) {
+            . $script.FullName
+        }
+
+        Install-ChocolateyGetProvider
+        Install-iPerf3
     }
     
     AfterEach {
