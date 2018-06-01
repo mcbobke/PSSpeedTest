@@ -14,20 +14,26 @@ function Install-ChocolateyGetProvider {
     Param (
     )
 
+    if (Get-PackageProvider -Name 'ChocolateyGet') {
+        Write-Verbose -Message 'Chocolatey package provider/source already installed.'
+        return 'Installed'
+    }
+
     $PackageProviderParams = @{
         Name = 'ChocolateyGet';
         Scope = 'CurrentUser';
         Force = $true;
         ForceBootstrap = $true;
-        ErrorAction = 'Stop';
+        ErrorAction = 'Ignore';
     }
 
-    try {
-        $result = Install-PackageProvider @PackageProviderParams
-        Write-Verbose 'Chocolatey package provider/source successfully installed.'
-        return $result
+    Write-Verbose -Message 'Installing ChocolateyGet PackageProvider.'
+    Install-PackageProvider @PackageProviderParams
+    if (Get-PackageProvider -Name 'ChocolateyGet') {
+        Write-Verbose -Message 'Chocolatey package provider/source successfully installed.'
+        return 'Installed'
     }
-    catch {
-        $PSCmdlet.ThrowTerminatingError($_)
+    else {
+        throw 'ChocolateyGet failed to install!'
     }
 }

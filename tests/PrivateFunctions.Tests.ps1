@@ -9,12 +9,11 @@ foreach ($script in (Get-ChildItem -Path $Script:PrivateFunctionPath)) {
 Describe "Private function tests for $Script:ModuleName" {
     It "Should install ChocolateyGet PackageProvider" {
         $result = Install-ChocolateyGetProvider
-        $result.Name | Should -Be 'ChocolateyGet'
+        $result | Should -Be 'Installed'
     }
 
     It "Should install iPerf3 Package from ChocolateyGet" {
         $result = Install-iPerf3
-        $result.Name | Should -Be 'iperf3'
-        $result.Status | Should -Be 'Installed'
+        $result | Should -Be 'Installed'
     }
 }

@@ -60,6 +60,9 @@ function Invoke-SpeedTest {
         $Port
     )
 
+    Install-ChocolateyGetProvider
+    Install-iPerf3
+    
     $config = Get-SpeedTestConfig
     $command = "iperf3.exe "
 

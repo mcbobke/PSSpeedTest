@@ -14,6 +14,11 @@ function Install-iPerf3 {
     Param (
     )
 
+    if (Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'Ignore') {
+        Write-Verbose -Message 'iPerf3 package already installed.'
+        return 'Installed'
+    }
+
     if (!(Get-PackageProvider -ListAvailable -Name 'ChocolateyGet')) {
         Write-Verbose -Message 'ChocolateyGet package provider not found; installing.'
         try {
@@ -25,13 +30,13 @@ function Install-iPerf3 {
     }
 
     Write-Verbose -Message 'Importing ChocolateyGet package provider and installing iperf3.'
-    try {
-        Import-PackageProvider -Name 'ChocolateyGet'
-        $result = Install-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -Force -ErrorAction "Stop"
+    Import-PackageProvider -Name 'ChocolateyGet'
+    Install-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -Force -ErrorAction 'Ignore'
+    if (Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'Ignore') {
         Write-Verbose -Message 'iPerf3 package installed.'
-        return $result
+        return 'Installed'
     }
-    catch {
-        $PSCmdlet.ThrowTerminatingError($_)
+    else {
+        throw 'iPerf3 failed to install!'
     }
 }
