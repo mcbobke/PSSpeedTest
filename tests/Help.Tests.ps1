@@ -1,4 +1,4 @@
-$Script:ModuleRoot = Resolve-Path "$PSScriptRoot\..\$Env:BHProjectName"
+$Script:ModuleRoot = Resolve-Path "$PSScriptRoot\..\output\$Env:BHProjectName"
 $Script:ModuleName = Split-Path $Script:ModuleRoot -Leaf
 $scripts = Get-ChildItem $Script:ModuleRoot -Filter '*.ps1' -Recurse
 

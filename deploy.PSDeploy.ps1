@@ -3,8 +3,9 @@
 # Folder structure:
 #   Repository Root
 #       PSDeploy Script
-#       Module Folder
-#           ModuleName.psd1
+#       output
+#           Module Folder
+#               ModuleName.psd1
 
 # Only deploy if the project name is known and the output directory exists.
 if ($Env:BHProjectName -and (Test-Path -Path ".\output\$Env:BHProjectName")) {
