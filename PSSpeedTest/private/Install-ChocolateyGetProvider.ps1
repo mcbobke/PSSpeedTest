@@ -34,6 +34,6 @@ function Install-ChocolateyGetProvider {
         return 'Installed'
     }
     else {
-        throw 'ChocolateyGet failed to install!'
+        throw 'ChocolateyGet failed to install'
     }
 }

@@ -6,8 +6,45 @@
     Set the default server configurations for Internet and Local speed test servers.
     Convert parameter values to appropriate PSCustomObject and write to the JSON configuration file.
 
+    .PARAMETER InternetServer
+    The server that will be utilized when running "Invoke-SpeedTest -Internet".
+
+    .PARAMETER InternetPort
+    The port that will be utilized when running "Invoke-SpeedTest -Internet".
+
+    .PARAMETER LocalServer
+    The server that will be utilized when running "Invoke-SpeedTest -Local".
+
+    .PARAMETER LocalPort
+    The port that will be utilized when running "Invoke-SpeedTest -Local".
+
     .EXAMPLE
-    Write an example.
+    Set-SpeedTestConfig -InternetServer "test.public.com" -InternetPort "5201"
+    Sets the default Internet speed test server to "test.public.com" on port "5201".
+
+    .EXAMPLE
+    Set-SpeedTestConfig -InternetServer "test.public.com"
+    Sets the default Internet speed test server to "test.public.com".
+    When running a speed test, the last saved Internet port will be utilized, or the default port "5201".
+
+    .EXAMPLE
+    Set-SpeedTestConfig -InternetPort "5201"
+    Sets the default Internet speed test port to "5201".
+    Requires a previously-saved Internet speed test server.
+
+    .EXAMPLE
+    Set-SpeedTestConfig -LocalServer "test.local.com" -LocalPort "5201"
+    Sets the default Local speed test server to "test.local.com" on port "5201".
+
+    .EXAMPLE
+    Set-SpeedTestConfig -LocalServer "test.local.com"
+    Sets the default Local speed test server to "test.local.com".
+    When running a speed test, the last saved Local port will be utilized, or the default port "5201".
+
+    .EXAMPLE
+    Set-SpeedTestConfig -Local "5201"
+    Sets the default Local speed test port to "5201".
+    Requires a previously-saved Local speed test server.
 #>
 
 function Set-SpeedTestConfig {

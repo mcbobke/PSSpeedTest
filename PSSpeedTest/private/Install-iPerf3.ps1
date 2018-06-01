@@ -37,6 +37,6 @@ function Install-iPerf3 {
         return 'Installed'
     }
     else {
-        throw 'iPerf3 failed to install!'
+        throw 'iPerf3 failed to install'
     }
 }
