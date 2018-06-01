@@ -110,11 +110,19 @@ function Invoke-SpeedTest {
     $resultsPS = $resultsJSON | ConvertFrom-Json
 
     if ($resultsPS.error) {
-        throw "iPerf3 error occurred: $($resultsPS.error)"
+        if ($resultsPS.error -match 'unable to connect to server'){
+            throw "Catastrophic error occurred: $($resultsPS.error)"
+        }
+        else {
+            Write-Warning -Message "Problem occurred: $($resultsPS.error)"
+            $megabitsPerSecSent = 0
+            $megabitsPerSecReceived = 0
+        }
     }
-
-    $megabitsPerSecSent = (($resultsPS.end.sum_sent.bits_per_second) / 1000000.0).ToInt32($null)
-    $megabitsPerSecReceived = (($resultsPS.end.sum_received.bits_per_second) / 1000000.0).ToInt32($null)
+    else {
+        $megabitsPerSecSent = (($resultsPS.end.sum_sent.bits_per_second) / 1000000.0).ToInt32($null)
+        $megabitsPerSecReceived = (($resultsPS.end.sum_received.bits_per_second) / 1000000.0).ToInt32($null)
+    }
 
     $returnObj = New-Object -TypeName 'PSCustomObject' @{
         megabitsPerSecSent = $megabitsPerSecSent;
