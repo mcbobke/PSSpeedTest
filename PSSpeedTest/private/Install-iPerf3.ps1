@@ -14,12 +14,12 @@ function Install-iPerf3 {
     Param (
     )
 
-    if (Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'Ignore') {
+    if (Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue') {
         Write-Verbose -Message 'iPerf3 package already installed.'
         return 'Installed'
     }
 
-    if (!(Get-PackageProvider -ListAvailable -Name 'ChocolateyGet')) {
+    if (!(Get-PackageProvider -ListAvailable -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue')) {
         Write-Verbose -Message 'ChocolateyGet package provider not found; installing.'
         try {
             Install-ChocolateyGetProvider
@@ -31,8 +31,8 @@ function Install-iPerf3 {
 
     Write-Verbose -Message 'Importing ChocolateyGet package provider and installing iperf3.'
     Import-PackageProvider -Name 'ChocolateyGet'
-    Install-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -Force -ErrorAction 'Ignore'
-    if (Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'Ignore') {
+    Install-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -Force -ErrorAction 'SilentlyContinue'
+    if (Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue') {
         Write-Verbose -Message 'iPerf3 package installed.'
         return 'Installed'
     }

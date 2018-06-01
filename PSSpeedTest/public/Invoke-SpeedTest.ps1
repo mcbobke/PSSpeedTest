@@ -62,7 +62,7 @@ function Invoke-SpeedTest {
 
     Install-ChocolateyGetProvider
     Install-iPerf3
-    
+
     $config = Get-SpeedTestConfig
     $command = "iperf3.exe "
 
@@ -110,7 +110,6 @@ function Invoke-SpeedTest {
     $resultsPS = $resultsJSON | ConvertFrom-Json
 
     if ($resultsPS.error) {
-        Write-Host "$($resultsPS.error)"
         throw "iPerf3 error occurred: $($resultsPS.error)"
     }
 
