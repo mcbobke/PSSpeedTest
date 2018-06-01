@@ -103,7 +103,15 @@ Task BuildPSD1 {
     Set-ModuleFunctions -Name $Script:ManifestPath -FunctionsToExport $moduleFunctions
     Set-ModuleAliases -Name $Script:ManifestPath
 
-    $currentVersion = [Version](Get-Metadata -Path $Script:ManifestPath -PropertyName 'ModuleVersion')
+    $currentModule = Find-Module -Name $Script:ModuleName -Repository $Env:PublishToRepo -ErrorAction 'SilentlyContinue'
+    if ($currentModule -and ($currentModule.GetType().BaseType -ne 'System.Array')) {
+        $currentVersion = $currentModule.Version
+        Write-Output "  Previous publish found - current version: $currentVersion"
+    }
+    else {
+        $currentVersion = [Version](Get-Metadata -Path $Script:ManifestPath -PropertyName 'ModuleVersion')
+        Write-Output "  Previous publish not found - current version: $currentVersion"
+    }
     if ($Env:BHCommitMessage -match '!(major|minor)') {
         $VersionIncrement = $Matches[1]
     }
