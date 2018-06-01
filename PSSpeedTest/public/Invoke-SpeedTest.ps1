@@ -7,11 +7,11 @@
 
     .PARAMETER Internet
     Forces the bandwitdth test to run over the internet against a public iPerf3 server.
-    If a default public iPerf3 server is not specified in the configuration file, the user will be prompted to specify a default server.
+    If a default public iPerf3 server is not specified in the configuration file, the user will be prompted to run Set-SpeedTestConfig.
 
     .PARAMETER Local
     Forces the bandwidth test to run over the local network against a locally-accessible iPerf3 server.
-    If a default server is not specified in the configuration file, the user will be prompted to specify a default server.
+    If a default server is not specified in the configuration file, the user will be prompted to run Set-SpeedTestConfig.
 
     .PARAMETER Server
     The hostname or IP address of a server that is running iPerf3 as a listening service.
@@ -60,5 +60,63 @@ function Invoke-SpeedTest {
         $Port
     )
 
-    Write-Host 'This cmdlet is not yet implemented!'
+    $config = Get-SpeedTestConfig
+    $command = "iperf3.exe "
+
+    if ($Internet) {
+        if (!($config.defaultInternetServer.defaultServer)) {
+            throw "No default Internet server configured - run Set-SpeedTestConfig."
+        }
+        else {
+            $command = $command + "-c $($config.defaultInternetServer.defaultServer) "
+            if ($config.defaultInternetServer.defaultPort) {
+                $command = $command + "-p $($config.defaultInternetServer.defaultPort) "
+            }
+            else {
+                $command = $command + "-p $($config.defaultPort) "
+            }
+        }
+    }
+    elseif ($Local) {
+        if (!($config.defaultLocalServer.defaultServer)) {
+            throw "No default Local server configured - run Set-SpeedTestConfig."
+        }
+        else {
+            $command = $command + "-c $($config.defaultLocalServer.defaultServer) "
+            if ($config.defaultLocalServer.defaultPort) {
+                $command = $command + "-p $($config.defaultLocalServer.defaultPort) "
+            }
+            else {
+                $command = $command + "-p $($config.defaultPort) "
+            }
+        }
+    }
+    elseif ($Server) {
+        $command = $command + "-c $Server "
+        if ($Port) {
+            $command = $command + "-p $Port "
+        }
+        else {
+            $command = $command + "-p $($config.defaultPort) "
+        }
+    }
+
+    $command = $command + "-f m -J"
+
+    $resultsJSON = Invoke-Expression -Command $command
+    $resultsPS = $resultsJSON | ConvertFrom-Json
+
+    if ($resultsPS.error) {
+        throw "iPerf3 error occurred: $($resultsPS.error)"
+    }
+
+    $megabitsPerSecSent = (($resultsPS.end.sum_sent.bits_per_second) / 1000000.0).ToInt32($null)
+    $megabitsPerSecReceived = (($resultsPS.end.sum_received.bits_per_second) / 1000000.0).ToInt32($null)
+
+    $returnObj = New-Object -TypeName 'PSCustomObject' @{
+        megabitsPerSecSent = $megabitsPerSecSent;
+        megabitsPerSecReceived = $megabitsPerSecReceived;
+    }
+
+    return $returnObj
 }

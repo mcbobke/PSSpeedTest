@@ -14,7 +14,7 @@ function Reset-Configuration {
 }
 
 Describe "Unit tests for $Script:ModuleName" {
-    # Mocking as these functions will eventually call over the network
+    # Mocking as these functions will call over the network
     Mock Invoke-SpeedTest {return 0}
     Mock Install-SpeedTestServer {return 0}
     
