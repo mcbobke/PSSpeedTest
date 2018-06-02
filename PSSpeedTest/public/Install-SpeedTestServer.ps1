@@ -44,8 +44,8 @@ function Install-SpeedTestServer {
         Write-Verbose -Message "Setting up server on local machine on port $Port."
         Install-ChocolateyGetProvider
         Install-iPerf3
-        Set-iPerf3Port
-        Set-iPerf3Task
+        Set-iPerf3Port -Port $Port
+        Set-iPerf3Task -Port $Port
         Write-Verbose -Message "Waiting for 5 seconds for iPerf3 executable to launch."
         Start-Sleep -Seconds 5
 
@@ -61,8 +61,8 @@ function Install-SpeedTestServer {
             Write-Verbose -Message "Setting up server on domain machine $ComputerName on port $Port."
             Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-ChocolateyGetProvider}
             Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3}
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port}
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task}
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -ArgumentList $Port
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -ArgumentList $Port
             Write-Verbose -Message "Waiting for 5 seconds for iPerf3 executable to launch."
             Start-Sleep -Seconds 5
 
@@ -78,8 +78,8 @@ function Install-SpeedTestServer {
             Write-Verbose -Message "Setting up server on domain machine $ComputerName on port $Port with credential $Credential."
             Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-ChocolateyGetProvider} -Credential $Credential
             Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3} -Credential $Credential
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -Credential $Credential
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -Credential $Credential
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -ArgumentList $Port -Credential $Credential
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -ArgumentList $Port -Credential $Credential
             Write-Verbose -Message "Waiting for 5 seconds for iPerf3 executable to launch."
             Start-Sleep -Seconds 5
 
