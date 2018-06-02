@@ -48,7 +48,7 @@ function Set-iPerf3Task {
         throw 'Scheduled task was not registered.'
     }
     else {
-        Start-ScheduledTask -TaskName $result.TaskName
+        Start-ScheduledTask -TaskName 'iPerf3 Server'
         return 'Registered/started scheduled task'
     }
 }
