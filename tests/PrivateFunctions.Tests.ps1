@@ -31,7 +31,7 @@ Describe "Private function tests for $Script:ModuleName" {
 
     Context "Set-iPerf3Task" {
         It "Should register iPerf3 server Scheduled Task" {
-            $result = Set-iPerf3Task
+            $result = Set-iPerf3Task -Port '5201'
             $result | Should -Be 'Registered/started scheduled task'
         }
     }

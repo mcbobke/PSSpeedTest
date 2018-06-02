@@ -66,7 +66,7 @@ Describe "Feature tests for module $Script:ModuleName" {
         }
 
         It "Should install iPerf3 scheduled task listener on local computer" {
-            {Install-SpeedTestServer} | Should -Be 'iPerf3 Server started on port 5201.'
+            Install-SpeedTestServer | Should -Be 'iPerf3 Server started on port 5201.'
         }
     }
 }
