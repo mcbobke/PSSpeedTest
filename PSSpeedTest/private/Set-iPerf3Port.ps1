@@ -10,7 +10,7 @@
     The port that iPerf3 will listen on.
 
     .EXAMPLE
-    Set-iPerf3Port "5201"
+    Set-iPerf3Port -Port "5201"
 #>
 
 function Set-iPerf3Port {

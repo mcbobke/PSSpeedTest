@@ -3,7 +3,7 @@
     Installs the latest version of iPerf3 on this computer.
 
     .DESCRIPTION
-    Installs the latest version of iPerf3 on this computer from the Chocolatey package source.
+    Installs the latest version of iPerf3 on this computer from the ChocolateyGet package source.
 
     .EXAMPLE
     Install-iPerf3
@@ -14,18 +14,23 @@ function Install-iPerf3 {
     Param (
     )
 
-    if (Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue') {
-        Write-Verbose -Message 'iPerf3 package already installed.'
-        return 'Installed'
-    }
+    try {
+        Import-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'Stop'
 
-    if (!(Get-PackageProvider -ListAvailable -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue')) {
-        Write-Verbose -Message 'ChocolateyGet package provider not found; installing.'
-        try {
-            Install-ChocolateyGetProvider
+        if (Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue') {
+            Write-Verbose -Message 'iPerf3 package already installed.'
+            return 'Installed'
         }
-        catch {
-            $PSCmdlet.ThrowTerminatingError($_)
+    }
+    catch {
+        if (!(Get-PackageProvider -ListAvailable -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue')) {
+            Write-Verbose -Message 'ChocolateyGet package provider not found; installing.'
+            try {
+                Install-ChocolateyGetProvider
+            }
+            catch {
+                $PSCmdlet.ThrowTerminatingError($_)
+            }
         }
     }
 

@@ -1,9 +1,9 @@
 <#
     .SYNOPSIS
-    Configures the local or a domain computer as a private local iPerf3 server.
+    Configures the local or a domain computer as an iPerf3 server.
 
     .DESCRIPTION
-    Configures iPerf3 as a constantly-listening service on the local or a  domain computer.
+    Configures iPerf3 as a constantly-listening service on the local or a domain computer.
 
     .PARAMETER ComputerName
     The name of the domain computer that will act as an iPerf3 server.
@@ -17,7 +17,13 @@
     Domain credentials used to authenticate to a domain computer, if necessary.
 
     .EXAMPLE
-    Need to write examples.
+    Install-SpeedTestServer -ComputerName SERVER01 -Port 5201 -Credential domain\user
+    Sets up computer SERVER01 as an iPerf3 server listening on port 5201.
+    This runs the appropriate setup functions under the 'domain\user' credential.
+
+    .EXAMPLE
+    Install-SpeedTestServer -Port 5555
+    Sets up the local computer as an iPerf3 server listening on port 5555.
 #>
 
 function Install-SpeedTestServer {
@@ -34,5 +40,56 @@ function Install-SpeedTestServer {
         $Credential
     )
 
-    Write-Host 'This cmdlet is not yet implemented!'
+    if (!($ComputerName)) {
+        Write-Verbose -Message "Setting up server on local machine on port $Port."
+        Install-ChocolateyGetProvider
+        Install-iPerf3
+        Set-iPerf3Port
+        Set-iPerf3Task
+        Write-Verbose -Message "Waiting for 5 seconds for iPerf3 executable to launch."
+        Start-Sleep -Seconds 5
+
+        if (Get-Process -Name 'iperf3.exe' -ErrorAction 'SilentlyContinue') {
+            return "iPerf3 Server started on port $Port."
+        }
+        else {
+            throw "iPerf3 Server failed to start on port $Port."
+        }
+    }
+    else {
+        if (!($Credential)) {
+            Write-Verbose -Message "Setting up server on domain machine $ComputerName on port $Port."
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-ChocolateyGetProvider}
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3}
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port}
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task}
+            Write-Verbose -Message "Waiting for 5 seconds for iPerf3 executable to launch."
+            Start-Sleep -Seconds 5
+
+            $getProcessResult = Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-Process -Name 'iperf3.exe' -ErrorAction 'SilentlyContinue'}
+            if ($getProcessResult) {
+                return "iPerf3 Server started on computer $ComputerName on port $Port."
+            }
+            else {
+                throw "iPerf3 Server failed to start on computer $ComputerName on port $Port."
+            }
+        }
+        else {
+            Write-Verbose -Message "Setting up server on domain machine $ComputerName on port $Port with credential $Credential."
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-ChocolateyGetProvider} -Credential $Credential
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3} -Credential $Credential
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -Credential $Credential
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -Credential $Credential
+            Write-Verbose -Message "Waiting for 5 seconds for iPerf3 executable to launch."
+            Start-Sleep -Seconds 5
+
+            $getProcessResult = Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-Process -Name 'iperf3.exe' -ErrorAction 'SilentlyContinue'} -Credential $Credential
+            if ($getProcessResult) {
+                return "iPerf3 Server started on computer $ComputerName on port $Port with credential $Credential."
+            }
+            else {
+                throw "iPerf3 Server failed to start on computer $ComputerName on port $Port with credential $Credential."
+            }
+        }
+    }
 }
