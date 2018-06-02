@@ -23,7 +23,7 @@ function Set-iPerf3Task {
     )
 
     $actionParams = @{
-        Execute = "$(Get-Command -Name 'iperf3.exe' | Select-Object -ExpandProperty 'Source')";
+        Execute = (Get-Command -Name 'iperf3.exe' | Select-Object -ExpandProperty 'Source');
         Argument = "-s -D -p $Port";
     }
 
@@ -45,7 +45,7 @@ function Set-iPerf3Task {
     $result = Register-ScheduledTask -InputObject $task -TaskName "iPerf3 Server" -ErrorAction 'SilentlyContinue'
 
     if (!($result)) {
-        throw 'Scheduled task was not registered'
+        throw 'Scheduled task was not registered.'
     }
     else {
         Start-ScheduledTask -TaskName $result.TaskName
