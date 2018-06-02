@@ -46,10 +46,10 @@ function Install-SpeedTestServer {
         Install-iPerf3
         Set-iPerf3Port -Port $Port
         Set-iPerf3Task -Port $Port
-        Write-Verbose -Message "Waiting for 5 seconds for iPerf3 executable to launch."
-        Start-Sleep -Seconds 5
+        Write-Verbose -Message "Waiting for 10 seconds for iPerf3 executable to launch."
+        Start-Sleep -Seconds 10
 
-        if (Get-Process -Name 'iperf3.exe' -ErrorAction 'SilentlyContinue') {
+        if (Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue') {
             return "iPerf3 Server started on port $Port."
         }
         else {
@@ -66,7 +66,7 @@ function Install-SpeedTestServer {
             Write-Verbose -Message "Waiting for 5 seconds for iPerf3 executable to launch."
             Start-Sleep -Seconds 5
 
-            $getProcessResult = Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-Process -Name 'iperf3.exe' -ErrorAction 'SilentlyContinue'}
+            $getProcessResult = Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'}
             if ($getProcessResult) {
                 return "iPerf3 Server started on computer $ComputerName on port $Port."
             }
@@ -83,7 +83,7 @@ function Install-SpeedTestServer {
             Write-Verbose -Message "Waiting for 5 seconds for iPerf3 executable to launch."
             Start-Sleep -Seconds 5
 
-            $getProcessResult = Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-Process -Name 'iperf3.exe' -ErrorAction 'SilentlyContinue'} -Credential $Credential
+            $getProcessResult = Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'} -Credential $Credential
             if ($getProcessResult) {
                 return "iPerf3 Server started on computer $ComputerName on port $Port with credential $Credential."
             }
