@@ -44,7 +44,7 @@ function Set-iPerf3Task {
     $task = New-ScheduledTask @taskParams
     $result = Register-ScheduledTask -InputObject $task -TaskName "iPerf3 Server" -ErrorAction 'SilentlyContinue'
 
-    if (!($result)) {
+    if (Get-ScheduledTask -TaskName 'iPerf3 Server' -ErrorAction 'SilentlyContinue') {
         throw 'Scheduled task was not registered.'
     }
     else {
