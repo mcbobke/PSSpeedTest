@@ -3,7 +3,7 @@ Param(
 )
 
 Task Default Build, Test, Distribute
-Task Build CopyOutput, BuildPSD1
+Task Build CopyOutput, BuildPSM1, BuildPSD1
 
 function PublishTestResults {
     Param (
@@ -55,35 +55,68 @@ Task Clean {
 }
 
 Task CopyOutput {
-    Write-Output "Creating directory [$Script:Destination]"
+    Write-Output "  Creating directory [$Script:Destination]"
     New-Item -Type Directory -Path $Script:Destination -ErrorAction Ignore | Out-Null
 
-    Write-Output "Files and directories to be copied from source [$Script:Source]"
+    Write-Output "  Files and directories to be copied from source [$Script:Source]"
+
     Get-ChildItem -Path $Script:Source -File | `
-        Where-Object -Property Name -NotMatch "$Script:ModuleName\.ps[d]1" | `
+        Where-Object -Property Name -NotMatch "$Script:ModuleName\.ps[md]1" | `
         Copy-Item -Destination $Script:Destination -Force -PassThru | `
-        ForEach-Object {"Creating file [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
+        ForEach-Object {"   Creating file [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
 
     Get-ChildItem -Path $Script:Source -Directory | `
         Copy-Item -Destination $Script:Destination -Recurse -Force -PassThru | `
-        ForEach-Object {"Creating directory (recursive) [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
+        ForEach-Object {"   Creating directory (recursive) [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
+}
+
+Task BuildPSM1 {
+    [System.Text.StringBuilder]$StringBuilder = [System.Text.StringBuilder]::new()
+    foreach ($folder in $Script:Imports)
+    {
+        [void]$StringBuilder.AppendLine("Write-Verbose `"Importing from [`$PSScriptRoot\$folder]`"")
+        if (Test-Path "$Script:Source\$folder")
+        {
+            $fileList = Get-ChildItem "$Script:Source\$folder" -Filter '*.ps1'
+            foreach ($file in $fileList)
+            {
+                $importName = "$folder\$($file.Name)"
+                Write-Output "  Found $importName"
+                [void]$StringBuilder.AppendLine( ". `"`$PSScriptRoot\$importName`"")
+            }
+        }
+    }
+
+    [void]$StringBuilder.AppendLine("`$publicFunctions = (Get-ChildItem -Path `"`$PSScriptRoot\public`" -Filter '*.ps1').BaseName")
+    [void]$StringBuilder.AppendLine("Export-ModuleMember -Function `$publicFunctions")
+    
+    Write-Output "  Creating module [$Script:ModulePath]"
+    Set-Content -Path $Script:ModulePath -Value $stringbuilder.ToString() 
 }
 
 Task BuildPSD1 {
-    Write-Output "Updating [$Script:ManifestPath]"
+    Write-Output "  Updating [$Script:ManifestPath]"
     Copy-Item "$Script:Source\$ModuleName.psd1" -Destination $Script:ManifestPath
 
-    $moduleFunctions = Get-ChildItem "$Script:Source\public\*.ps1" | `
+    $moduleFunctions = Get-ChildItem "$Script:Source\public" -Filter '*.ps1' | `
         Select-Object -ExpandProperty BaseName
     Set-ModuleFunctions -Name $Script:ManifestPath -FunctionsToExport $moduleFunctions
     Set-ModuleAliases -Name $Script:ManifestPath
 
-    $currentVersion = [Version](Get-Metadata -Path $Script:ManifestPath -PropertyName 'ModuleVersion')
+    $currentModule = Find-Module -Name $Script:ModuleName -Repository $Env:PublishToRepo -ErrorAction 'SilentlyContinue'
+    if ($currentModule -and ($currentModule.GetType().BaseType -ne 'System.Array')) {
+        $currentVersion = $currentModule.Version
+        Write-Output "  Previous publish found - current version: $currentVersion"
+    }
+    else {
+        $currentVersion = [Version](Get-Metadata -Path $Script:ManifestPath -PropertyName 'ModuleVersion')
+        Write-Output "  Previous publish not found - current version: $currentVersion"
+    }
     if ($Env:BHCommitMessage -match '!(major|minor)') {
         $VersionIncrement = $Matches[1]
     }
     $newVersion = [Version](Step-Version -Version $currentVersion -By $VersionIncrement)
-    Write-Output "Stepping module from current version [$currentVersion] to new version [$newVersion] by [$VersionIncrement]"
+    Write-Output "  Stepping module from current version [$currentVersion] to new version [$newVersion] by [$VersionIncrement]"
     Update-Metadata -Path $Script:ManifestPath -PropertyName 'ModuleVersion' -Value $newVersion
 }
 
@@ -115,9 +148,9 @@ Task Distribute {
         Invoke-PSDeploy @DeployParams
     }
     else {
-        Write-Output "Skipping deployment:"
-        Write-Output "Build system: $Env:BHBuildSystem"
-        Write-Output "Current branch (should be master): $Env:BHBranchName"
-        Write-Output "Commit message (should include '!deploy'): $Env:BHCommitMessage"
+        Write-Output "  Skipping deployment:"
+        Write-Output "  Build system: $Env:BHBuildSystem"
+        Write-Output "  Current branch (should be master): $Env:BHBranchName"
+        Write-Output "  Commit message (should include '!deploy'): $Env:BHCommitMessage"
     }
 }

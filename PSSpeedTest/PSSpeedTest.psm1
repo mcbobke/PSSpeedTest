@@ -1,3 +1,5 @@
+# Temporary - is replaced by BuildPSM1 Task
+
 $functionFolders = @('public', 'private')
 ForEach ($folder in $functionFolders) {
     $folderPath = Join-Path -Path "$PSScriptRoot" -ChildPath $folder

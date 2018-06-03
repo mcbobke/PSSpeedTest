@@ -1,0 +1,10 @@
+{   "defaultPort"       : "5201",
+    "defaultLocalServer": {
+        "defaultServer" : "",
+        "defaultPort"   : ""
+    },
+    "defaultInternetServer" : {
+        "defaultServer" : "",
+        "defaultPort"   : ""
+    }
+}
