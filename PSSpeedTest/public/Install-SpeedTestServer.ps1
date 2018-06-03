@@ -63,7 +63,7 @@ function Install-SpeedTestServer {
             Write-Verbose -Message "iPerf3 Server started on port $Port."
         }
         else {
-            throw "iPerf3 Server failed to start on port $Port."
+            throw "iPerf3 Server failed to start on port $Port. Message: $($error[0].Exception.message)"
         }
 
         if ($PassThru) {
@@ -85,7 +85,7 @@ function Install-SpeedTestServer {
                 Write-Verbos -Message "iPerf3 Server started on computer $ComputerName on port $Port."
             }
             else {
-                throw "iPerf3 Server failed to start on computer $ComputerName on port $Port."
+                throw "iPerf3 Server failed to start on computer $ComputerName on port $Port. Message: $($error[0].Exception.message)"
             }
 
             if ($PassThru) {
@@ -106,7 +106,7 @@ function Install-SpeedTestServer {
                 Write-Verbos -Message "iPerf3 Server started on computer $ComputerName on port $Port with credential $Credential."
             }
             else {
-                throw "iPerf3 Server failed to start on computer $ComputerName on port $Port with credential $Credential."
+                throw "iPerf3 Server failed to start on computer $ComputerName on port $Port with credential $Credential. Message: $($error[0].Exception.message)"
             }
 
             if ($PassThru) {

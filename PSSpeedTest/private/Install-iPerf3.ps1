@@ -24,10 +24,16 @@ function Install-iPerf3 {
 
     try {
         Import-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'Stop'
+        $toReturn = Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue'
 
-        if (Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue') {
+        if ($toReturn) {
             Write-Verbose -Message 'iPerf3 package already installed.'
-            return 'Installed'
+            if ($PassThru) {
+                return $toReturn
+            }
+            else {
+                return
+            }
         }
     }
     catch {
@@ -51,7 +57,7 @@ function Install-iPerf3 {
         Write-Verbose -Message 'iPerf3 package installed.'
     }
     else {
-        throw 'iPerf3 failed to install'
+        throw "iPerf3 failed to install. Message: $($error[0].Exception.message)"
     }
 
     if ($PassThru) {

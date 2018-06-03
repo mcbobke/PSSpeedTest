@@ -55,7 +55,7 @@ function Set-iPerf3Task {
         Write-Verbose -Message 'Scheduled task for iPerf3 server started.'
     }
     else {
-        throw 'Scheduled task for iPerf3 server was not registered.'
+        throw "Scheduled task for iPerf3 server was not registered. Message: $($error[0].Exception.message)"
     }
 
     if ($PassThru) {

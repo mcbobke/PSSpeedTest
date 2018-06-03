@@ -22,9 +22,15 @@ function Install-ChocolateyGetProvider {
         $PassThru
     )
 
-    if (Get-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue') {
+    $toReturn = Get-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue'
+    if ($toReturn) {
         Write-Verbose -Message 'Chocolatey package provider/source already installed.'
-        return 'Installed'
+        if ($PassThru) {
+            return $toReturn
+        }
+        else {
+            return
+        }
     }
 
     $PackageProviderParams = @{
@@ -43,7 +49,7 @@ function Install-ChocolateyGetProvider {
         Write-Verbose -Message 'Chocolatey package provider/source successfully installed.'
     }
     else {
-        throw 'ChocolateyGet failed to install'
+        throw "ChocolateyGet failed to install. Message: $($error[0].Exception.message)"
     }
 
     if ($PassThru) {
