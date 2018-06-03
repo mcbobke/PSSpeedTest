@@ -28,6 +28,9 @@ function Install-ChocolateyGetProvider {
         if ($PassThru) {
             return $toReturn
         }
+        else {
+            return
+        }
     }
 
     $PackageProviderParams = @{

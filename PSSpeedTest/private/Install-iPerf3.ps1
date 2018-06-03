@@ -31,6 +31,9 @@ function Install-iPerf3 {
             if ($PassThru) {
                 return $toReturn
             }
+            else {
+                return
+            }
         }
     }
     catch {

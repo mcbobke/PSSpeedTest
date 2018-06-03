@@ -23,21 +23,21 @@ Describe "Feature tests for module $Script:ModuleName" {
         }
 
         It "Should successfully run a speed test against a valid public iPerf3 server with a saved configuration" {
-            Set-SpeedTestConfig -InternetServer "iperf.scottlinux.com" -InternetPort "5201"
+            Set-SpeedTestConfig -InternetServer "iperf.he.net" -InternetPort "5201"
             {Invoke-SpeedTest -Internet} | Should -Not -Throw
         }
 
         It "Should successfully run a speed test against a valid public iPerf3 server with a saved configuration using default port '5201'" {
-            Set-SpeedTestConfig -InternetServer "iperf.scottlinux.com"
+            Set-SpeedTestConfig -InternetServer "iperf.he.net"
             {Invoke-SpeedTest -Internet} | Should -Not -Throw
         }
 
         It "Should successfully run a speed test against a valid public iPerf3 server using specified Server/Port parameters" {
-            {Invoke-SpeedTest -Server "iperf.scottlinux.com" -Port "5201"} | Should -Not -Throw
+            {Invoke-SpeedTest -Server "iperf.he.net" -Port "5201"} | Should -Not -Throw
         }
         
         It "Should successfully run a speed test against a valid public iPerf3 server using specified Server parameter and default port '5201'" {
-            {Invoke-SpeedTest -Server "iperf.scottlinux.com"} | Should -Not -Throw
+            {Invoke-SpeedTest -Server "iperf.he.net"} | Should -Not -Throw
         }
 
         It "Should throw an error when running a speed test against an invalid public iPerf3 server with a saved configuration" {
