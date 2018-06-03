@@ -10,29 +10,25 @@ Describe "Private function tests for $Script:ModuleName" {
 
     Context "Install-ChocolateyGetProvider" {
         It "Should install ChocolateyGet PackageProvider" {
-            $result = Install-ChocolateyGetProvider
-            $result | Should -Be 'Installed'
+            {Install-ChocolateyGetProvider} | Should -Not -Throw
         }
     }
 
     Context "Install-iPerf3" {
         It "Should install iPerf3 Package from ChocolateyGet" {
-            $result = Install-iPerf3
-            $result | Should -Be 'Installed'
+            {Install-iPerf3} | Should -Not -Throw
         }
     }
 
     Context "Set-iPerf3Port" {
         It "Should set firewall rules for iPerf3 using designated port" {
-            $result = Set-iPerf3Port -Port '5201'
-            $result | Should -Be 'Set port'
+            {Set-iPerf3Port -Port '5201'} | Should -Not -Throw
         }
     }
 
     Context "Set-iPerf3Task" {
         It "Should register iPerf3 server Scheduled Task" {
-            $result = Set-iPerf3Task -Port '5201'
-            $result | Should -Be 'Registered/started scheduled task'
+            {Set-iPerf3Task -Port '5201'} | Should -Not -Throw
         }
     }
 }

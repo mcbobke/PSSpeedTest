@@ -5,13 +5,21 @@
     .DESCRIPTION
     Installs the ChocolateyGet package provider/source on this computer forcefully.
 
+    .PARAMETER PassThru
+    Returns the object returned by "Get-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue'".
+
     .EXAMPLE
     Install-ChocolateyGetProvider
+
+    .EXAMPLE
+    Install-ChocolateyGetProvider -PassThru
 #>
 
 function Install-ChocolateyGetProvider {
     [CmdletBinding()]
     Param (
+        [Switch]
+        $PassThru
     )
 
     if (Get-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue') {
@@ -29,11 +37,16 @@ function Install-ChocolateyGetProvider {
 
     Write-Verbose -Message 'Installing ChocolateyGet PackageProvider.'
     Install-PackageProvider @PackageProviderParams
-    if (Get-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue') {
+    $toReturn = Get-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue'
+    
+    if ($toReturn) {
         Write-Verbose -Message 'Chocolatey package provider/source successfully installed.'
-        return 'Installed'
     }
     else {
         throw 'ChocolateyGet failed to install'
+    }
+
+    if ($PassThru) {
+        return $toReturn
     }
 }

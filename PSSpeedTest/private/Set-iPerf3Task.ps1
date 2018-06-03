@@ -9,6 +9,9 @@
     .PARAMETER Port
     The port that iPerf3 will listen on.
 
+    .PARAMETER PassThru
+    Returns the object returned by "Get-ScheduledTask -TaskName 'iPerf3 Server' -ErrorAction 'SilentlyContinue'".
+
     .EXAMPLE
     Set-iPerf3Task -Port "5201"
 #>
@@ -19,7 +22,9 @@ function Set-iPerf3Task {
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [String]
-        $Port
+        $Port,
+        [Switch]
+        $PassThru
     )
 
     $actionParams = @{
@@ -42,13 +47,18 @@ function Set-iPerf3Task {
     }
 
     $task = New-ScheduledTask @taskParams
-    $result = Register-ScheduledTask -InputObject $task -TaskName 'iPerf3 Server' -ErrorAction 'SilentlyContinue'
+    Register-ScheduledTask -InputObject $task -TaskName 'iPerf3 Server' -ErrorAction 'SilentlyContinue' | Out-Null
+    $toReturn = Get-ScheduledTask -TaskName 'iPerf3 Server' -ErrorAction 'SilentlyContinue'
 
-    if (!(Get-ScheduledTask -TaskName 'iPerf3 Server' -ErrorAction 'SilentlyContinue')) {
-        throw 'Scheduled task was not registered.'
+    if ($toReturn) {
+        Start-ScheduledTask -TaskName 'iPerf3 Server'
+        Write-Verbose -Message 'Scheduled task for iPerf3 server started.'
     }
     else {
-        Start-ScheduledTask -TaskName 'iPerf3 Server'
-        return 'Registered/started scheduled task'
+        throw 'Scheduled task for iPerf3 server was not registered.'
+    }
+
+    if ($PassThru) {
+        return $toReturn
     }
 }

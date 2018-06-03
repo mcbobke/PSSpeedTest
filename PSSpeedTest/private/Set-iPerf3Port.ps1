@@ -9,8 +9,14 @@
     .PARAMETER Port
     The port that iPerf3 will listen on.
 
+    .PARAMETER PassThru
+    Returns the objects returned by "New-NetFirewallRule" for both the inbound and outbound rules, in an array.
+
     .EXAMPLE
     Set-iPerf3Port -Port "5201"
+
+    .EXAMPLE
+    Set-iPerf3Port -Port "5201" -PassThru
 #>
 
 function Set-iPerf3Port {
@@ -19,7 +25,9 @@ function Set-iPerf3Port {
         [Parameter(Mandatory=$true)]
         [ValidateNotNullOrEmpty()]
         [String]
-        $Port
+        $Port,
+        [Switch]
+        $PassThru
     )
 
     $FirewallInboundParams = @{
@@ -43,10 +51,14 @@ function Set-iPerf3Port {
     $inboundResult = New-NetFirewallRule @FirewallInboundParams
     $outboundResult = New-NetFirewallRule @FirewallOutboundParams
 
-    if (!($inboundResult) -or !($outboundResult)) {
-        throw 'Firewall rules could not be set'
+    if ($inboundResult -and $outboundResult) {
+        Write-Verbose -Message 'iPerf3 server port firewall rules set.'
     }
     else {
-        return 'Set port'
+        throw 'iPerf3 server port firewall rules could not be set'
+    }
+
+    if ($PassThru) {
+        return @($inboundResult, $outboundResult)
     }
 }

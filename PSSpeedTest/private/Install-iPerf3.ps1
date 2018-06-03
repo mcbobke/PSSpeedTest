@@ -5,13 +5,21 @@
     .DESCRIPTION
     Installs the latest version of iPerf3 on this computer from the ChocolateyGet package source.
 
+    .PARAMETER PassThru
+    Returns the object returned by "Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue'".
+
     .EXAMPLE
     Install-iPerf3
+
+    .EXAMPLE
+    Install-iPerf3 -PassThru
 #>
 
 function Install-iPerf3 {
     [CmdletBinding()]
     Param (
+        [Switch]
+        $PassThru
     )
 
     try {
@@ -37,11 +45,16 @@ function Install-iPerf3 {
     Write-Verbose -Message 'Importing ChocolateyGet package provider and installing iperf3.'
     Import-PackageProvider -Name 'ChocolateyGet'
     Install-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -Force -ErrorAction 'SilentlyContinue'
-    if (Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue') {
+    $toReturn = Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue'
+
+    if ($toReturn) {
         Write-Verbose -Message 'iPerf3 package installed.'
-        return 'Installed'
     }
     else {
         throw 'iPerf3 failed to install'
+    }
+
+    if ($PassThru) {
+        return $toReturn
     }
 }

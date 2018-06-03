@@ -16,6 +16,9 @@
     .PARAMETER Credential
     Domain credentials used to authenticate to a domain computer, if necessary.
 
+    .PARAMETER PassThru
+    Returns the object returned by "Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'".
+
     .EXAMPLE
     Install-SpeedTestServer -ComputerName SERVER01 -Port 5201 -Credential domain\user
     Sets up computer SERVER01 as an iPerf3 server listening on port 5201.
@@ -24,6 +27,9 @@
     .EXAMPLE
     Install-SpeedTestServer -Port 5555
     Sets up the local computer as an iPerf3 server listening on port 5555.
+
+    .EXAMPLE
+    Install-SpeedTestServer -Port 5555 -PassThru
 #>
 
 function Install-SpeedTestServer {
@@ -37,58 +43,74 @@ function Install-SpeedTestServer {
         $Port = '5201',
         [ValidateNotNullOrEmpty()]
         [PSCredential]
-        $Credential
+        $Credential,
+        [Switch]
+        $PassThru
     )
 
     if (!($ComputerName)) {
         Write-Verbose -Message "Setting up server on local machine on port $Port."
-        Install-ChocolateyGetProvider | Out-Null
-        Install-iPerf3 | Out-Null
-        Set-iPerf3Port -Port $Port | Out-Null
-        Set-iPerf3Task -Port $Port | Out-Null
+        Install-ChocolateyGetProvider
+        Install-iPerf3
+        Set-iPerf3Port -Port $Port
+        Set-iPerf3Task -Port $Port
         Write-Verbose -Message "Waiting for 10 seconds for iPerf3 executable to launch."
         Start-Sleep -Seconds 10
 
-        if (Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue') {
-            return "iPerf3 Server started on port $Port."
+        $getProcessResult = Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'
+
+        if ($getProcessResult) {
+            Write-Verbose -Message "iPerf3 Server started on port $Port."
         }
         else {
             throw "iPerf3 Server failed to start on port $Port."
+        }
+
+        if ($PassThru) {
+            return $getProcessResult
         }
     }
     else {
         if (!($Credential)) {
             Write-Verbose -Message "Setting up server on domain machine $ComputerName on port $Port."
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-ChocolateyGetProvider} | Out-Null
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3} | Out-Null
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -ArgumentList $Port | Out-Null
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -ArgumentList $Port | Out-Null
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-ChocolateyGetProvider}
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3}
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -ArgumentList $Port
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -ArgumentList $Port
             Write-Verbose -Message "Waiting for 5 seconds for iPerf3 executable to launch."
             Start-Sleep -Seconds 5
 
             $getProcessResult = Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'}
             if ($getProcessResult) {
-                return "iPerf3 Server started on computer $ComputerName on port $Port."
+                Write-Verbos -Message "iPerf3 Server started on computer $ComputerName on port $Port."
             }
             else {
                 throw "iPerf3 Server failed to start on computer $ComputerName on port $Port."
             }
+
+            if ($PassThru) {
+                return $getProcessResult
+            }
         }
         else {
             Write-Verbose -Message "Setting up server on domain machine $ComputerName on port $Port with credential $Credential."
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-ChocolateyGetProvider} -Credential $Credential | Out-Null
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3} -Credential $Credential | Out-Null
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -ArgumentList $Port -Credential $Credential | Out-Null
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -ArgumentList $Port -Credential $Credential | Out-Null
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-ChocolateyGetProvider} -Credential $Credential
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3} -Credential $Credential
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -ArgumentList $Port -Credential $Credential
+            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -ArgumentList $Port -Credential $Credential
             Write-Verbose -Message "Waiting for 5 seconds for iPerf3 executable to launch."
             Start-Sleep -Seconds 5
 
             $getProcessResult = Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'} -Credential $Credential
             if ($getProcessResult) {
-                return "iPerf3 Server started on computer $ComputerName on port $Port with credential $Credential."
+                Write-Verbos -Message "iPerf3 Server started on computer $ComputerName on port $Port with credential $Credential."
             }
             else {
                 throw "iPerf3 Server failed to start on computer $ComputerName on port $Port with credential $Credential."
+            }
+
+            if ($PassThru) {
+                return $getProcessResult
             }
         }
     }
