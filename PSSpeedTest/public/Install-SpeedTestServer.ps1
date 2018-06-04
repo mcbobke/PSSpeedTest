@@ -77,12 +77,12 @@ function Install-SpeedTestServer {
             Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3}
             Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -ArgumentList $Port
             Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -ArgumentList $Port
-            Write-Verbose -Message "Waiting for 5 seconds for iPerf3 executable to launch."
-            Start-Sleep -Seconds 5
+            Write-Verbose -Message "Waiting for 10 seconds for iPerf3 executable to launch."
+            Start-Sleep -Seconds 10
 
             $getProcessResult = Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'}
             if ($getProcessResult) {
-                Write-Verbos -Message "iPerf3 Server started on computer $ComputerName on port $Port."
+                Write-Verbose -Message "iPerf3 Server started on computer $ComputerName on port $Port."
             }
             else {
                 throw "iPerf3 Server failed to start on computer $ComputerName on port $Port. Message: $($error[0].Exception.message)"
@@ -98,12 +98,12 @@ function Install-SpeedTestServer {
             Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3} -Credential $Credential
             Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -ArgumentList $Port -Credential $Credential
             Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -ArgumentList $Port -Credential $Credential
-            Write-Verbose -Message "Waiting for 5 seconds for iPerf3 executable to launch."
-            Start-Sleep -Seconds 5
+            Write-Verbose -Message "Waiting for 10 seconds for iPerf3 executable to launch."
+            Start-Sleep -Seconds 10
 
             $getProcessResult = Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'} -Credential $Credential
             if ($getProcessResult) {
-                Write-Verbos -Message "iPerf3 Server started on computer $ComputerName on port $Port with credential $Credential."
+                Write-Verbose -Message "iPerf3 Server started on computer $ComputerName on port $Port with credential $Credential."
             }
             else {
                 throw "iPerf3 Server failed to start on computer $ComputerName on port $Port with credential $Credential. Message: $($error[0].Exception.message)"
