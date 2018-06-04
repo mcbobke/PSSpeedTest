@@ -50,6 +50,10 @@ function Install-SpeedTestServer {
 
     $timeout = 30 # Seconds
 
+    if (!(Test-Administrator)) {
+        throw "You are not running as administrator. Please re-run this function after opening PowerShell as administrator."
+    }
+
     if (!($ComputerName)) {
         Write-Verbose -Message "Setting up server on local machine on port $Port."
         Install-ChocolateyGetProvider
@@ -83,10 +87,15 @@ function Install-SpeedTestServer {
     else {
         if (!($Credential)) {
             Write-Verbose -Message "Setting up server on domain machine $ComputerName on port $Port."
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-ChocolateyGetProvider}
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3}
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -ArgumentList $Port
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -ArgumentList $Port
+            try {
+                Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-ChocolateyGetProvider}
+                Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3}
+                Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -ArgumentList $Port
+                Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -ArgumentList $Port
+            }
+            catch {
+                $PSCmdlet.ThrowTerminatingError($_)
+            }
 
             $timeoutTimer = [Diagnostics.Stopwatch]::StartNew()
             $processTest = $false
@@ -113,10 +122,15 @@ function Install-SpeedTestServer {
         }
         else {
             Write-Verbose -Message "Setting up server on domain machine $ComputerName on port $Port with credential $Credential."
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-ChocolateyGetProvider} -Credential $Credential
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3} -Credential $Credential
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -ArgumentList $Port -Credential $Credential
-            Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -ArgumentList $Port -Credential $Credential
+            try {
+                Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-ChocolateyGetProvider} -Credential $Credential
+                Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3} -Credential $Credential
+                Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -ArgumentList $Port -Credential $Credential
+                Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -ArgumentList $Port -Credential $Credential
+            }
+            catch {
+                $PSCmdlet.ThrowTerminatingError($_)
+            }
 
             $timeoutTimer = [Diagnostics.Stopwatch]::StartNew()
             $processTest = $false
