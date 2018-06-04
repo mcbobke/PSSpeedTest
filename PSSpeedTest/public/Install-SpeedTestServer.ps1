@@ -48,22 +48,32 @@ function Install-SpeedTestServer {
         $PassThru
     )
 
+    $timeout = 30 # Seconds
+
     if (!($ComputerName)) {
         Write-Verbose -Message "Setting up server on local machine on port $Port."
         Install-ChocolateyGetProvider
         Install-iPerf3
         Set-iPerf3Port -Port $Port
         Set-iPerf3Task -Port $Port
-        Write-Verbose -Message "Waiting for 10 seconds for iPerf3 executable to launch."
-        Start-Sleep -Seconds 10
 
-        $getProcessResult = Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'
-
-        if ($getProcessResult) {
-            Write-Verbose -Message "iPerf3 Server started on port $Port."
+        $timeoutTimer = [Diagnostics.Stopwatch]::StartNew()
+        $processTest = $false
+        while ($timeoutTimer.Elapsed.TotalSeconds -lt $timeout) {
+            $getProcessResult = Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'
+            if ($getProcessResult) {
+                Write-Verbose -Message "iPerf3 Server started on port $Port."
+                $processTest = $true
+                break
+            }
+            else {
+                Start-Sleep -Seconds 3
+            }
         }
-        else {
-            throw "iPerf3 Server failed to start on port $Port. Message: $($error[0].Exception.message)"
+        $timeoutTimer.Stop()
+
+        if (!($processTest)) {
+            throw "iPerf3 Server failed to start on port $Port. Timeout of $timeout seconds reached."
         }
 
         if ($PassThru) {
@@ -77,15 +87,24 @@ function Install-SpeedTestServer {
             Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3}
             Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -ArgumentList $Port
             Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -ArgumentList $Port
-            Write-Verbose -Message "Waiting for 10 seconds for iPerf3 executable to launch."
-            Start-Sleep -Seconds 10
 
-            $getProcessResult = Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'}
-            if ($getProcessResult) {
-                Write-Verbose -Message "iPerf3 Server started on computer $ComputerName on port $Port."
+            $timeoutTimer = [Diagnostics.Stopwatch]::StartNew()
+            $processTest = $false
+            while ($timeoutTimer.Elapsed.TotalSeconds -lt $timeout) {
+                $getProcessResult = Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'}
+                if ($getProcessResult) {
+                    Write-Verbose -Message "iPerf3 Server started on computer $ComputerName on port $Port."
+                    $processTest = $true
+                    break
+                }
+                else {
+                    Start-Sleep -Seconds 3
+                }
             }
-            else {
-                throw "iPerf3 Server failed to start on computer $ComputerName on port $Port. Message: $($error[0].Exception.message)"
+            $timeoutTimer.Stop()
+
+            if (!($processTest)) {
+                throw "iPerf3 Server failed to start on computer $ComputerName on port $Port. Timeout of $timeout seconds reached."
             }
 
             if ($PassThru) {
@@ -98,15 +117,24 @@ function Install-SpeedTestServer {
             Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3} -Credential $Credential
             Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -ArgumentList $Port -Credential $Credential
             Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -ArgumentList $Port -Credential $Credential
-            Write-Verbose -Message "Waiting for 10 seconds for iPerf3 executable to launch."
-            Start-Sleep -Seconds 10
 
-            $getProcessResult = Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'} -Credential $Credential
-            if ($getProcessResult) {
-                Write-Verbose -Message "iPerf3 Server started on computer $ComputerName on port $Port with credential $Credential."
+            $timeoutTimer = [Diagnostics.Stopwatch]::StartNew()
+            $processTest = $false
+            while ($timeoutTimer.Elapsed.TotalSeconds -lt $timeout) {
+                $getProcessResult = Invoke-Command -ComputerName $ComputerName -ScriptBlock {Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'} -Credential $Credential
+                if ($getProcessResult) {
+                    Write-Verbose -Message "iPerf3 Server started on computer $ComputerName on port $Port with credential $Credential."
+                    $processTest = $true
+                    break
+                }
+                else {
+                    Start-Sleep -Seconds 3
+                }
             }
-            else {
-                throw "iPerf3 Server failed to start on computer $ComputerName on port $Port with credential $Credential. Message: $($error[0].Exception.message)"
+            $timeoutTimer.Stop()
+
+            if (!($processTest)) {
+                throw "iPerf3 Server failed to start on computer $ComputerName on port $Port with credential $Credential. Timeout of $timeout seconds reached."
             }
 
             if ($PassThru) {
