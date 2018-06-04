@@ -19,7 +19,7 @@
 function Set-iPerf3Task {
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory=$true,Position=0)]
         [ValidateNotNullOrEmpty()]
         [String]
         $Port,
@@ -52,7 +52,7 @@ function Set-iPerf3Task {
 
     if ($toReturn) {
         Start-ScheduledTask -TaskName 'iPerf3 Server'
-        Write-Verbose -Message 'Scheduled task for iPerf3 server started.'
+        Write-Verbose -Message 'Scheduled task for iPerf3 server registered and started.'
     }
     else {
         throw "Scheduled task for iPerf3 server was not registered. Message: $($error[0].Exception.message)"

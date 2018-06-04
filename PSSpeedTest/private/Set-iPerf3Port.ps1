@@ -22,7 +22,7 @@
 function Set-iPerf3Port {
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$true,Position=0)]
         [ValidateNotNullOrEmpty()]
         [String]
         $Port,
