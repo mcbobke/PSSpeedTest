@@ -24,7 +24,7 @@ function Install-iPerf3 {
 
     try {
         Import-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'Stop'
-        $toReturn = Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue'
+        $toReturn = Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -Force -ErrorAction 'SilentlyContinue'
 
         if ($toReturn) {
             Write-Verbose -Message 'iPerf3 package already installed.'
@@ -50,8 +50,8 @@ function Install-iPerf3 {
 
     Write-Verbose -Message 'Importing ChocolateyGet package provider and installing iperf3.'
     Import-PackageProvider -Name 'ChocolateyGet'
-    Install-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -Force -ErrorAction 'SilentlyContinue'
-    $toReturn = Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue'
+    Install-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -Force -ErrorAction 'SilentlyContinue' | Out-Null
+    $toReturn = Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -Force -ErrorAction 'SilentlyContinue'
 
     if ($toReturn) {
         Write-Verbose -Message 'iPerf3 package installed.'
