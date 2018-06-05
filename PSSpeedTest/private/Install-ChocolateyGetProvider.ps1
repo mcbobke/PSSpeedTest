@@ -37,12 +37,11 @@ function Install-ChocolateyGetProvider {
         Name = 'ChocolateyGet';
         Scope = 'CurrentUser';
         Force = $true;
-        ForceBootstrap = $true;
         ErrorAction = 'SilentlyContinue';
     }
 
     Write-Verbose -Message 'Installing ChocolateyGet PackageProvider.'
-    Install-PackageProvider @PackageProviderParams
+    Install-PackageProvider @PackageProviderParams | Out-Null
     $toReturn = Get-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue'
     
     if ($toReturn) {
