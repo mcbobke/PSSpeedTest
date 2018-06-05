@@ -151,7 +151,7 @@ function Invoke-SpeedTest {
         return $returnObj
     }
     else {
-        Write-Host "Send speed: $megabitsPerSecSent"
-        Write-Host "Receive speed: $megabitsPerSecReceived"
+        Write-Host "Send speed: $megabitsPerSecSent mbps"
+        Write-Host "Receive speed: $megabitsPerSecReceived mbps"
     }
 }
