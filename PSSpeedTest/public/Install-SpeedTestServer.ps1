@@ -48,6 +48,8 @@ function Install-SpeedTestServer {
         $PassThru
     )
 
+    Write-Verbose -Message "Setting up $ComputerName as a speed test server."
+
     $timeout = 30 # Seconds
 
     if (!(Test-Administrator)) {

@@ -30,6 +30,8 @@ function Set-iPerf3Port {
         $PassThru
     )
 
+    Write-Verbose -Message "Setting inbound and outbound iperf3 firewall rules."
+
     $FirewallInboundParams = @{
         DisplayName = "iPerf3 Server Inbound TCP Rule";
         Direction = "Inbound";

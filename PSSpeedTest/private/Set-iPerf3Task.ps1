@@ -27,6 +27,7 @@ function Set-iPerf3Task {
         $PassThru
     )
 
+    Write-Verbose -Message "Gathering scheduled task settings."
     $actionParams = @{
         Execute = (Get-Command -Name 'iperf3.exe' | Select-Object -ExpandProperty 'Source');
         Argument = "-s -D -p $Port";
