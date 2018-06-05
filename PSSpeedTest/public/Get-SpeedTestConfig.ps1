@@ -24,13 +24,14 @@ function Get-SpeedTestConfig {
         Write-Verbose -Message "Getting content of config.json and returning as a PSCustomObject."
         $config = Get-Content -Path "$($PSScriptRoot | Split-Path -Parent)\config.json" -ErrorAction "Stop" | ConvertFrom-Json
 
-        Write-Host "Internet Server: $($config.defaultInternetServer.defaultServer)"
-        Write-Host "Internet Port: $($config.defaultInternetServer.defaultPort)"
-        Write-Host "Local Server: $($config.defaultLocalServer.defaultServer)"
-        Write-Host "Local Port: $($config.defaultLocalServer.defaultPort)"
-
         if ($PassThru){
             return $config
+        }
+        else {
+            Write-Host "Internet Server: $($config.defaultInternetServer.defaultServer)"
+            Write-Host "Internet Port: $($config.defaultInternetServer.defaultPort)"
+            Write-Host "Local Server: $($config.defaultLocalServer.defaultServer)"
+            Write-Host "Local Port: $($config.defaultLocalServer.defaultPort)"
         }
     }
     catch {
