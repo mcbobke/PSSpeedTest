@@ -15,6 +15,7 @@ function Get-SpeedTestConfig {
     Param()
 
     try {
+        Write-Verbose -Message "Getting content of config.json and returning as a PSCustomObject."
         $config = Get-Content -Path "$($PSScriptRoot | Split-Path -Parent)\config.json" -ErrorAction "Stop"
         return $config | ConvertFrom-Json
     }

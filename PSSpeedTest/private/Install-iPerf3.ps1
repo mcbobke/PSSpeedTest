@@ -23,6 +23,7 @@ function Install-iPerf3 {
     )
 
     try {
+        Write-Verbose -Message "Checking for existence iperf3 package."
         Import-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'Stop'
         $toReturn = Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -Force -ErrorAction 'SilentlyContinue'
 
@@ -48,7 +49,7 @@ function Install-iPerf3 {
         }
     }
 
-    Write-Verbose -Message 'Importing ChocolateyGet package provider and installing iperf3.'
+    Write-Verbose -Message 'Importing ChocolateyGet package provider and installing iperf3 package as it was not found.'
     Import-PackageProvider -Name 'ChocolateyGet'
     Install-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -Force -ErrorAction 'SilentlyContinue' | Out-Null
     $toReturn = Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -Force -ErrorAction 'SilentlyContinue'

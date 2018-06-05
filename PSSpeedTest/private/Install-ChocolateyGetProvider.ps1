@@ -22,6 +22,7 @@ function Install-ChocolateyGetProvider {
         $PassThru
     )
 
+    Write-Verbose -Message "Checking for existence of ChocolateyGet provider."
     $toReturn = Get-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue'
     if ($toReturn) {
         Write-Verbose -Message 'Chocolatey package provider/source already installed.'
@@ -40,7 +41,7 @@ function Install-ChocolateyGetProvider {
         ErrorAction = 'SilentlyContinue';
     }
 
-    Write-Verbose -Message 'Installing ChocolateyGet PackageProvider.'
+    Write-Verbose -Message 'Installing ChocolateyGet PackageProvider as it was not found.'
     Install-PackageProvider @PackageProviderParams | Out-Null
     $toReturn = Get-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue'
     

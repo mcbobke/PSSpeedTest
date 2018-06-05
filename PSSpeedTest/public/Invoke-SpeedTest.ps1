@@ -60,6 +60,8 @@ function Invoke-SpeedTest {
         $Port
     )
 
+    Write-Verbose -Message "Starting speed test."
+
     Install-ChocolateyGetProvider
     Install-iPerf3
 
@@ -67,6 +69,7 @@ function Invoke-SpeedTest {
     $command = "iperf3.exe "
 
     if ($Internet) {
+        Write-Verbose -Message "Defaulting to stored Internet speed test server settings."
         if (!($config.defaultInternetServer.defaultServer)) {
             throw "No default Internet server configured - run Set-SpeedTestConfig."
         }
@@ -81,6 +84,7 @@ function Invoke-SpeedTest {
         }
     }
     elseif ($Local) {
+        Write-Verbose -Message "Defaulting to stored Local speed test server settings."
         if (!($config.defaultLocalServer.defaultServer)) {
             throw "No default Local server configured - run Set-SpeedTestConfig."
         }
@@ -95,6 +99,7 @@ function Invoke-SpeedTest {
         }
     }
     elseif ($Server) {
+        Write-Verbose -Message "Server: $Server and port: $Port specified manually."
         $command = $command + "-c $Server "
         if ($Port) {
             $command = $command + "-p $Port "
@@ -105,6 +110,8 @@ function Invoke-SpeedTest {
     }
 
     $command = $command + "-f m -J"
+
+    Write-Verbose -Message "Executing command: $command"
 
     $resultsJSON = Invoke-Expression -Command $command
     $resultsPS = $resultsJSON | ConvertFrom-Json
@@ -120,6 +127,7 @@ function Invoke-SpeedTest {
         }
     }
     else {
+        Write-Verbose -Message "Speed test successful; calculating mbps and returning PSCustomObject."
         $megabitsPerSecSent = (($resultsPS.end.sum_sent.bits_per_second) / 1000000.0).ToInt32($null)
         $megabitsPerSecReceived = (($resultsPS.end.sum_received.bits_per_second) / 1000000.0).ToInt32($null)
     }
