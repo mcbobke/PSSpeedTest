@@ -112,75 +112,75 @@ Describe "Unit tests for $Script:ModuleName" {
 
     Context "Invoke-SpeedTest" {
         It "Should not throw an error if only the Internet parameter is used" {
-            {Invoke-SpeedTest -Internet} | Should -Not -Throw
+            {Invoke-SpeedTest -Internet -PassThru} | Should -Not -Throw
         }
 
         It "Should not throw an error if only the Local parameter is used" {
-            {Invoke-SpeedTest -Local} | Should -Not -Throw
+            {Invoke-SpeedTest -Local -PassThru} | Should -Not -Throw
         }
 
         It "Should not throw an error if only the Server parameter is used" {
-            {Invoke-SpeedTest -Server "local.domain.com"} | Should -Not -Throw
+            {Invoke-SpeedTest -Server "local.domain.com" -PassThru} | Should -Not -Throw
         }
 
         It "Should throw an error if the Internet and Server parameters are both used" {
-            {Invoke-SpeedTest -Internet -Server "local.domain.com"} | Should -Throw
+            {Invoke-SpeedTest -Internet -Server "local.domain.com" -PassThru} | Should -Throw
         }
 
         It "Should throw an error if the Local and Server parameters are both used" {
-            {Invoke-SpeedTest -Local -Server "local.domain.com"} | Should -Throw
+            {Invoke-SpeedTest -Local -Server "local.domain.com" -PassThru} | Should -Throw
         }
 
         It "Should throw an error if the Internet and Port parameters are both used" {
-            {Invoke-SpeedTest -Internet -Port "5201"} | Should -Throw
+            {Invoke-SpeedTest -Internet -Port "5201" -PassThru} | Should -Throw
         }
 
         It "Should throw an error if the Local and Port parameters are both used" {
-            {Invoke-SpeedTest -Local -Port "5201"} | Should -Throw
+            {Invoke-SpeedTest -Local -Port "5201" -PassThru} | Should -Throw
         }
 
         It "Should throw an error if the Internet, Local and Server parameters are used" {
-            {Invoke-SpeedTest -Internet -Local -Server "local.domain.com"} | Should -Throw
+            {Invoke-SpeedTest -Internet -Local -Server "local.domain.com" -PassThru} | Should -Throw
         }
 
         It "Should throw an error if the Internet, Local and Port parameters are used" {
-            {Invoke-SpeedTest -Internet -Local -Port "5201"} | Should -Throw
+            {Invoke-SpeedTest -Internet -Local -Port "5201" -PassThru} | Should -Throw
         }
 
         It "Should throw an error if the Internet, Local, Server and Port parameters are used" {
-            {Invoke-SpeedTest -Internet -Local -Server "local.domain.com" -Port "5201"} | Should -Throw
+            {Invoke-SpeedTest -Internet -Local -Server "local.domain.com" -Port "5201" -PassThru} | Should -Throw
         }
 
         It "Should throw an error if both Internet and Local parameters are used" {
-            {Invoke-SpeedTest -Internet -Local} | Should -Throw
+            {Invoke-SpeedTest -Internet -Local -PassThru} | Should -Throw
         }
 
         It "Should throw an error if Server and Port parameters are used but empty" {
-            {Invoke-SpeedTest -Server "" -Port ""} | Should -Throw
+            {Invoke-SpeedTest -Server "" -Port "" -PassThru} | Should -Throw
         }
 
         It "Should throw an error if Server parameter is used but empty" {
-            {Invoke-SpeedTest -Server "" -Port "5201"} | Should -Throw
+            {Invoke-SpeedTest -Server "" -Port "5201" -PassThru} | Should -Throw
         }
 
         It "Should throw an error if Port parameter is used but empty" {
-            {Invoke-SpeedTest -Server "local.domain.com" -Port ""} | Should -Throw
+            {Invoke-SpeedTest -Server "local.domain.com" -Port "" -PassThru} | Should -Throw
         }
 
         It "Should throw an error if Server and Port parameters are used but null" {
-            {Invoke-SpeedTest -Server $null -Port $null} | Should -Throw
+            {Invoke-SpeedTest -Server $null -Port $null -PassThru} | Should -Throw
         }
 
         It "Should throw an error if Server parameter is used but null" {
-            {Invoke-SpeedTest -Server $null -Port "5201"} | Should -Throw
+            {Invoke-SpeedTest -Server $null -Port "5201" -PassThru} | Should -Throw
         }
 
         It "Should throw an error if Port parameter is used but null" {
-            {Invoke-SpeedTest -Server "local.domain.com" -Port $null} | Should -Throw
+            {Invoke-SpeedTest -Server "local.domain.com" -Port $null -PassThru} | Should -Throw
         }
 
         It "Should throw an error if Port parameter is used but Server is not" {
-            {Invoke-SpeedTest -Port "5201"} | Should -Throw
+            {Invoke-SpeedTest -Port "5201" -PassThru} | Should -Throw
         }
     }
 

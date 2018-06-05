@@ -20,6 +20,9 @@
     The port on the iPerf3 server that iPerf3 is listening on.
     This will run the local iPerf3 client on the same port as they must match on the client and the server.
     If Server is specified and Port is not, the default port '5201' will be used.
+    
+    .PARAMETER PassThru
+    Returns a PSCustomObject with the send/receive speeds as properties.
 
     .EXAMPLE
     Invoke-SpeedTest -Internet
@@ -38,6 +41,11 @@
     .EXAMPLE
     Invoke-SpeedTest -Server 20.19.57.21 -Port 7777
     Runs a bandwidth test against iPerf3 server '20.19.57.21' on port '7777'.
+
+    .EXAMPLE
+    Invoke-SpeedTest -Server 20.19.57.21 -Port 7777
+    Runs a bandwidth test against iPerf3 server '20.19.57.21' on port '7777'.
+    Returns the send/receive speeds as a PSCustomObject with properties.
 #>
 
 function Invoke-SpeedTest {
@@ -57,7 +65,9 @@ function Invoke-SpeedTest {
         [Parameter(ParameterSetName="Specified")]
         [ValidateNotNullOrEmpty()]
         [String]
-        $Port
+        $Port,
+        [Switch]
+        $PassThru
     )
 
     Write-Verbose -Message "Starting speed test."
@@ -132,10 +142,16 @@ function Invoke-SpeedTest {
         $megabitsPerSecReceived = (($resultsPS.end.sum_received.bits_per_second) / 1000000.0).ToInt32($null)
     }
 
-    $returnObj = New-Object -TypeName 'PSCustomObject' @{
-        megabitsPerSecSent = $megabitsPerSecSent;
-        megabitsPerSecReceived = $megabitsPerSecReceived;
-    }
+    if ($PassThru) {
+        $returnObj = New-Object -TypeName 'PSCustomObject' @{
+            megabitsPerSecSent = $megabitsPerSecSent;
+            megabitsPerSecReceived = $megabitsPerSecReceived;
+        }
 
-    return $returnObj
+        return $returnObj
+    }
+    else {
+        Write-Host "Send speed: $megabitsPerSecSent"
+        Write-Host "Receive speed: $megabitsPerSecReceived"
+    }
 }
