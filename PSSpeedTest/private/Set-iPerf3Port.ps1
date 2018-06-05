@@ -57,7 +57,7 @@ function Set-iPerf3Port {
         Write-Verbose -Message 'iPerf3 server port firewall rules set.'
     }
     else {
-        throw "iPerf3 server port firewall rules could not be set. Message: $($error[0].Exception.message)"
+        throw "iPerf3 server port firewall rules could not be set. Message: {0}" -f $error[0].Exception.message
     }
 
     if ($PassThru) {

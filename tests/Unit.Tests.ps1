@@ -34,7 +34,7 @@ Describe "Unit tests for $Script:ModuleName" {
 
     Context "Get-SpeedTestConfig" {
         It "Should return a valid object with expected items" {
-            $result = Get-SpeedTestConfig
+            $result = Get-SpeedTestConfig -PassThru
             $result.defaultLocalServer.defaultServer | Should -BeNullOrEmpty
             $result.defaultLocalServer.defaultPort | Should -BeNullOrEmpty
             $result.defaultInternetServer.defaultServer | Should -BeNullOrEmpty

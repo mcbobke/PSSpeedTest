@@ -58,7 +58,7 @@ function Install-iPerf3 {
         Write-Verbose -Message 'iPerf3 package installed.'
     }
     else {
-        throw "iPerf3 failed to install. Message: $($error[0].Exception.message)"
+        throw "iPerf3 failed to install. Message: {0}" -f $error[0].Exception.message
     }
 
     if ($PassThru) {

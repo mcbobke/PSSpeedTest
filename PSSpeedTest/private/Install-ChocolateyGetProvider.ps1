@@ -49,7 +49,7 @@ function Install-ChocolateyGetProvider {
         Write-Verbose -Message 'Chocolatey package provider/source successfully installed.'
     }
     else {
-        throw "ChocolateyGet failed to install. Message: $($error[0].Exception.message)"
+        throw "ChocolateyGet failed to install. Message: {0}" -f $error[0].Exception.message
     }
 
     if ($PassThru) {
