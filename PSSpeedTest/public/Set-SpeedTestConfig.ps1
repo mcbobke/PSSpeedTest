@@ -101,7 +101,7 @@ function Set-SpeedTestConfig {
     if ($InternetServer) {$config.defaultInternetServer.defaultServer = $InternetServer}
     if ($InternetPort) {$config.defaultInternetServer.defaultPort = $InternetPort}
     if ($LocalServer) {$config.defaultLocalServer.defaultServer = $LocalServer}
-    if ($LocalPort) {$config.defaultLocalServer.defaultServer = $LocalPort}
+    if ($LocalPort) {$config.defaultLocalServer.defaultPort = $LocalPort}
 
     Write-Verbose -Message "Setting config.json."
     $config `
