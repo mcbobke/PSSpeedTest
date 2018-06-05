@@ -65,7 +65,7 @@ function Invoke-SpeedTest {
     Install-ChocolateyGetProvider
     Install-iPerf3
 
-    $config = Get-SpeedTestConfig
+    $config = Get-SpeedTestConfig -PassThru
     $command = "iperf3.exe "
 
     if ($Internet) {
