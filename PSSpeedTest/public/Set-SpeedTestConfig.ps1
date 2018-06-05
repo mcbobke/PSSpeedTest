@@ -66,7 +66,7 @@ function Set-SpeedTestConfig {
 
     try {
         Write-Verbose -Message "Trying Get-SpeedTestConfig before Set-SpeedTestConfig."
-        $config = Get-SpeedTestConfig
+        $config = Get-SpeedTestConfig -PassThru
         Write-Verbose -Message "Stored config.json found."
     }
     catch {
