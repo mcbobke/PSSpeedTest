@@ -77,6 +77,8 @@ function Invoke-SpeedTest {
 
     $config = Get-SpeedTestConfig -PassThru
     $command = "iperf3.exe "
+    $usedServer = ""
+    $usedPort = ""
 
     if ($Internet) {
         Write-Verbose -Message "Defaulting to stored Internet speed test server settings."
@@ -84,12 +86,15 @@ function Invoke-SpeedTest {
             throw "No default Internet server configured - run Set-SpeedTestConfig."
         }
         else {
-            $command = $command + "-c $($config.defaultInternetServer.defaultServer) "
+            $usedServer = $config.defaultInternetServer.defaultServer
+            $command = $command + "-c $usedServer "
             if ($config.defaultInternetServer.defaultPort) {
-                $command = $command + "-p $($config.defaultInternetServer.defaultPort) "
+                $usedPort = $config.defaultInternetServer.defaultPort
+                $command = $command + "-p $usedPort "
             }
             else {
-                $command = $command + "-p $($config.defaultPort) "
+                $usedPort = $config.defaultPort
+                $command = $command + "-p $usedPort "
             }
         }
     }
@@ -99,23 +104,29 @@ function Invoke-SpeedTest {
             throw "No default Local server configured - run Set-SpeedTestConfig."
         }
         else {
-            $command = $command + "-c $($config.defaultLocalServer.defaultServer) "
+            $usedServer = $config.defaultLocalServer.defaultServer
+            $command = $command + "-c $usedServer "
             if ($config.defaultLocalServer.defaultPort) {
-                $command = $command + "-p $($config.defaultLocalServer.defaultPort) "
+                $usedPort = $config.defaultLocalServer.defaultPort
+                $command = $command + "-p $usedPort "
             }
             else {
-                $command = $command + "-p $($config.defaultPort) "
+                $usedPort = $config.defaultPort
+                $command = $command + "-p $usedPort "
             }
         }
     }
     elseif ($Server) {
         Write-Verbose -Message "Server: $Server and port: $Port specified manually."
-        $command = $command + "-c $Server "
+        $usedServer = $Server
+        $command = $command + "-c $usedServer "
         if ($Port) {
-            $command = $command + "-p $Port "
+            $usedPort = $Port
+            $command = $command + "-p $usedPort "
         }
         else {
-            $command = $command + "-p $($config.defaultPort) "
+            $usedPort = $config.defaultPort
+            $command = $command + "-p $usedPort "
         }
     }
 
@@ -151,7 +162,8 @@ function Invoke-SpeedTest {
         return $returnObj
     }
     else {
-        Write-Host "Send speed: $megabitsPerSecSent mbps"
-        Write-Host "Receive speed: $megabitsPerSecReceived mbps"
+        Write-Host "Results of speed test against server '$usedServer' on port '$usedPort':"
+        Write-Host "    Send speed: $megabitsPerSecSent mbps"
+        Write-Host "    Receive speed: $megabitsPerSecReceived mbps"
     }
 }
