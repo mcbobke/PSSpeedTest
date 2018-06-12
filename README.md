@@ -14,6 +14,8 @@ Whenever I've needed to run a network bandwidth test, I've defaulted to services
 
 `Install-Module -Name PSSpeedTest -Repository PSGallery`
 
+**NOTE:** Installing this module will not automatically install `ChocolateyGet` or `iPerf3`. Running `Invoke-SpeedTest` or `Install-SpeedTestServer` will prompt for the installation of these two items **if** they are not installed **or** the `-Force` argument is not given.
+
 ## Usage (Public Functions)
 
 `Get-Help FunctionName -Full` for detailed help.

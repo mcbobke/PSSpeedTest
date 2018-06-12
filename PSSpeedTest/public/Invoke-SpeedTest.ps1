@@ -23,6 +23,9 @@
     
     .PARAMETER PassThru
     Returns a PSCustomObject with the send/receive speeds as properties.
+    
+    .PARAMETER Force
+    Skips any confirmations of installation of the ChocolateyGet PackageProvider and iPerf3 package.
 
     .EXAMPLE
     Invoke-SpeedTest -Internet
@@ -67,13 +70,15 @@ function Invoke-SpeedTest {
         [String]
         $Port,
         [Switch]
-        $PassThru
+        $PassThru,
+        [Switch]
+        $Force
     )
 
     Write-Verbose -Message "Starting speed test."
 
-    Install-ChocolateyGetProvider
-    Install-iPerf3
+    Install-ChocolateyGetProvider -Force:$Force
+    Install-iPerf3 -Force:$Force
 
     $config = Get-SpeedTestConfig -PassThru
     $command = "iperf3.exe "

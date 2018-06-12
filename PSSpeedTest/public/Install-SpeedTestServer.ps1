@@ -19,6 +19,9 @@
     .PARAMETER PassThru
     Returns the object returned by "Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'".
 
+    .PARAMETER Force
+    Skips any confirmations of installation of the ChocolateyGet PackageProvider and iPerf3 package.
+
     .EXAMPLE
     Install-SpeedTestServer -ComputerName SERVER01 -Port 5201 -Credential domain\user
     Sets up computer SERVER01 as an iPerf3 server listening on port 5201.
@@ -45,10 +48,10 @@ function Install-SpeedTestServer {
         [PSCredential]
         $Credential,
         [Switch]
-        $PassThru
+        $PassThru,
+        [Switch]
+        $Force
     )
-
-    Write-Verbose -Message "Setting up $ComputerName as a speed test server."
 
     $timeout = 30 # Seconds
 
@@ -58,8 +61,8 @@ function Install-SpeedTestServer {
 
     if (!($ComputerName)) {
         Write-Verbose -Message "Setting up server on local machine on port $Port."
-        Install-ChocolateyGetProvider
-        Install-iPerf3
+        Install-ChocolateyGetProvider -Force:$Force
+        Install-iPerf3 -Force:$Force
         Set-iPerf3Port -Port $Port
         Set-iPerf3Task -Port $Port
 
@@ -90,8 +93,8 @@ function Install-SpeedTestServer {
         if (!($Credential)) {
             Write-Verbose -Message "Setting up server on domain machine $ComputerName on port $Port."
             try {
-                Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-ChocolateyGetProvider}
-                Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3}
+                Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-ChocolateyGetProvider} -ArgumentList $Force
+                Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3} -ArgumentList $Force
                 Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -ArgumentList $Port
                 Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -ArgumentList $Port
             }
@@ -125,8 +128,8 @@ function Install-SpeedTestServer {
         else {
             Write-Verbose -Message "Setting up server on domain machine $ComputerName on port $Port with credential $Credential."
             try {
-                Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-ChocolateyGetProvider} -Credential $Credential
-                Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3} -Credential $Credential
+                Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-ChocolateyGetProvider} -Credential $Credential -ArgumentList $Force
+                Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Install-iPerf3} -Credential $Credential -ArgumentList $Force
                 Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Port} -ArgumentList $Port -Credential $Credential
                 Invoke-Command -ComputerName $ComputerName -ScriptBlock ${Function:Set-iPerf3Task} -ArgumentList $Port -Credential $Credential
             }

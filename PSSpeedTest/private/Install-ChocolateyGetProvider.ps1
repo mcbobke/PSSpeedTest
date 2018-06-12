@@ -5,6 +5,9 @@
     .DESCRIPTION
     Installs the ChocolateyGet package provider/source on this computer forcefully.
 
+    .PARAMETER Force
+    Forces installation of the ChocolateyGet PackageProvider if not already installed.
+
     .PARAMETER PassThru
     Returns the object returned by "Get-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue'".
 
@@ -19,6 +22,8 @@ function Install-ChocolateyGetProvider {
     [CmdletBinding()]
     Param (
         [Switch]
+        $Force,
+        [Switch]
         $PassThru
     )
 
@@ -32,6 +37,25 @@ function Install-ChocolateyGetProvider {
         else {
             return
         }
+    }
+
+    if (!($Force)) {
+        $response = '0'
+        do {
+            $response = Read-Host -Prompt "The 'ChocolateyGet' PackageProvider is required. Continue with installation? (y/n)"
+            switch ($response) {
+                'y' {
+                    break
+                }
+                'n' {
+                    Write-Verbose -Message "The operation was aborted."
+                    return
+                }
+                Default {
+                    Write-Verbose -Message "Invalid input. Expected 'y' or 'n'."
+                }
+            }
+        } while ($true)
     }
 
     $PackageProviderParams = @{
