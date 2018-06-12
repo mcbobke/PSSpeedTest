@@ -1,7 +1,7 @@
 $Script:ModuleRoot = Resolve-Path "$PSScriptRoot\..\output\$Env:BHProjectName"
 $Script:ModuleName = Split-Path $Script:ModuleRoot -Leaf
 $Script:ConfigPath = Join-Path -Path $Script:ModuleRoot -ChildPath "config.json"
-$Script:origConfirmPref = $ConfirmPreference
+$Global:origConfirmPref = $Global:ConfirmPreference
 
 function Reset-Configuration {
     $config = Get-Content -Path $Script:ConfigPath | ConvertFrom-Json
@@ -17,11 +17,11 @@ Describe "Feature tests for module $Script:ModuleName" {
         BeforeAll {
             Get-Module -All -Name $Script:ModuleName | Remove-Module -Force -ErrorAction 'Ignore'
             Import-Module $Global:TestThisModule
-            $ConfirmPreference = 'None'
+            $Global:ConfirmPreference = 'None'
         }
 
         AfterAll {
-            $ConfirmPreference = $Script:origConfirmPref
+            $Global:ConfirmPreference = $Global:origConfirmPref
         }
         
         AfterEach {
