@@ -5,6 +5,9 @@
     .DESCRIPTION
     Installs the latest version of iPerf3 on this computer from the ChocolateyGet package source.
 
+    .PARAMETER Force
+    Forces installation of the iPerf3 package if not already installed.
+
     .PARAMETER PassThru
     Returns the object returned by "Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue'".
 
@@ -18,6 +21,8 @@
 function Install-iPerf3 {
     [CmdletBinding()]
     Param (
+        [Switch]
+        $Force,
         [Switch]
         $PassThru
     )
@@ -47,6 +52,25 @@ function Install-iPerf3 {
                 $PSCmdlet.ThrowTerminatingError($_)
             }
         }
+    }
+
+    if (!($Force)) {
+        $response = '0'
+        do {
+            $response = Read-Host -Prompt "The 'iperf3' package is required. Continue with installation? (y/n)"
+            switch ($response) {
+                'y' {
+                    break
+                }
+                'n' {
+                    Write-Verbose -Message "The operation was aborted."
+                    return
+                }
+                Default {
+                    Write-Verbose -Message "Invalid input. Expected 'y' or 'n'."
+                }
+            }
+        } while ($true)
     }
 
     Write-Verbose -Message 'Importing ChocolateyGet package provider and installing iperf3 package as it was not found.'
