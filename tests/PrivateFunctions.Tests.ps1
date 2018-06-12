@@ -1,12 +1,20 @@
 $Script:ModuleRoot = Resolve-Path "$PSScriptRoot\..\output\$Env:BHProjectName"
 $Script:ModuleName = Split-Path $Script:ModuleRoot -Leaf
 $Script:PrivateFunctionPath = "$Script:ModuleRoot\private"
+$Script:origConfirmPref = $ConfirmPreference
 
 foreach ($script in (Get-ChildItem -Path $Script:PrivateFunctionPath)) {
     . $script.FullName
 }
 
 Describe "Private function tests for $Script:ModuleName" {
+    BeforeAll {
+        $ConfirmPreference = 'None'
+    }
+
+    AfterAll {
+        $ConfirmPreference = $Script:origConfirmPref
+    }
 
     Context "Install-ChocolateyGetProvider" {
         It "Should install ChocolateyGet PackageProvider" {

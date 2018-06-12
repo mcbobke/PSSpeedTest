@@ -49,7 +49,7 @@
 #>
 
 function Invoke-SpeedTest {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess=$True)]
     Param (
         [Parameter(ParameterSetName="Internet")]
         [Switch]

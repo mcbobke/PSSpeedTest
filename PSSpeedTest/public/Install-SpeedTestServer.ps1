@@ -33,7 +33,7 @@
 #>
 
 function Install-SpeedTestServer {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess=$True)]
     Param (
         [ValidateNotNullOrEmpty()]
         [String]
