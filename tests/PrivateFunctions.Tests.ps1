@@ -10,13 +10,13 @@ Describe "Private function tests for $Script:ModuleName" {
 
     Context "Install-ChocolateyGetProvider" {
         It "Should install ChocolateyGet PackageProvider" {
-            {Install-ChocolateyGetProvider -Force} | Should -Not -Throw
+            {Install-ChocolateyGetProvider} | Should -Not -Throw
         }
     }
 
     Context "Install-iPerf3" {
         It "Should install iPerf3 Package from ChocolateyGet" {
-            {Install-iPerf3 -Force} | Should -Not -Throw
+            {Install-iPerf3} | Should -Not -Throw
         }
     }
 
