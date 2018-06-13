@@ -80,16 +80,49 @@ function Invoke-SpeedTest {
     $usedServer = ""
     $usedPort = ""
 
-    if ($Internet) {
-        Write-Verbose -Message "Defaulting to stored Internet speed test server settings."
-        if (!($config.defaultInternetServer.defaultServer)) {
-            throw "No default Internet server configured - run Set-SpeedTestConfig."
+    switch ($PSCmdlet.ParameterSetName) {
+        "Internet" {
+            Write-Verbose -Message "Defaulting to stored Internet speed test server settings."
+            if (!($config.defaultInternetServer.defaultServer)) {
+                throw "No default Internet server configured - run Set-SpeedTestConfig."
+            }
+            else {
+                $usedServer = $config.defaultInternetServer.defaultServer
+                $command = $command + "-c $usedServer "
+                if ($config.defaultInternetServer.defaultPort) {
+                    $usedPort = $config.defaultInternetServer.defaultPort
+                    $command = $command + "-p $usedPort "
+                }
+                else {
+                    $usedPort = $config.defaultPort
+                    $command = $command + "-p $usedPort "
+                }
+            }
         }
-        else {
-            $usedServer = $config.defaultInternetServer.defaultServer
+        "Local" {
+            Write-Verbose -Message "Defaulting to stored Local speed test server settings."
+            if (!($config.defaultLocalServer.defaultServer)) {
+                throw "No default Local server configured - run Set-SpeedTestConfig."
+            }
+            else {
+                $usedServer = $config.defaultLocalServer.defaultServer
+                $command = $command + "-c $usedServer "
+                if ($config.defaultLocalServer.defaultPort) {
+                    $usedPort = $config.defaultLocalServer.defaultPort
+                    $command = $command + "-p $usedPort "
+                }
+                else {
+                    $usedPort = $config.defaultPort
+                    $command = $command + "-p $usedPort "
+                }
+            }
+        }
+        "Specified" {
+            Write-Verbose -Message "Server: $Server and port: $Port specified manually."
+            $usedServer = $Server
             $command = $command + "-c $usedServer "
-            if ($config.defaultInternetServer.defaultPort) {
-                $usedPort = $config.defaultInternetServer.defaultPort
+            if ($Port) {
+                $usedPort = $Port
                 $command = $command + "-p $usedPort "
             }
             else {
@@ -97,36 +130,8 @@ function Invoke-SpeedTest {
                 $command = $command + "-p $usedPort "
             }
         }
-    }
-    elseif ($Local) {
-        Write-Verbose -Message "Defaulting to stored Local speed test server settings."
-        if (!($config.defaultLocalServer.defaultServer)) {
-            throw "No default Local server configured - run Set-SpeedTestConfig."
-        }
-        else {
-            $usedServer = $config.defaultLocalServer.defaultServer
-            $command = $command + "-c $usedServer "
-            if ($config.defaultLocalServer.defaultPort) {
-                $usedPort = $config.defaultLocalServer.defaultPort
-                $command = $command + "-p $usedPort "
-            }
-            else {
-                $usedPort = $config.defaultPort
-                $command = $command + "-p $usedPort "
-            }
-        }
-    }
-    elseif ($Server) {
-        Write-Verbose -Message "Server: $Server and port: $Port specified manually."
-        $usedServer = $Server
-        $command = $command + "-c $usedServer "
-        if ($Port) {
-            $usedPort = $Port
-            $command = $command + "-p $usedPort "
-        }
-        else {
-            $usedPort = $config.defaultPort
-            $command = $command + "-p $usedPort "
+        Default {
+            Write-Error -Message "ParameterSet not identified."
         }
     }
 
