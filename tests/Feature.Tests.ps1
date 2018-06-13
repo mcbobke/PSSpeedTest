@@ -1,6 +1,7 @@
 $Script:ModuleRoot = Resolve-Path "$PSScriptRoot\..\output\$Env:BHProjectName"
 $Script:ModuleName = Split-Path $Script:ModuleRoot -Leaf
 $Script:ConfigPath = Join-Path -Path $Script:ModuleRoot -ChildPath "config.json"
+$Global:origConfirmPref = $Global:ConfirmPreference
 
 function Reset-Configuration {
     $config = Get-Content -Path $Script:ConfigPath | ConvertFrom-Json
@@ -16,6 +17,11 @@ Describe "Feature tests for module $Script:ModuleName" {
         BeforeAll {
             Get-Module -All -Name $Script:ModuleName | Remove-Module -Force -ErrorAction 'Ignore'
             Import-Module $Global:TestThisModule
+            $Global:ConfirmPreference = 'None'
+        }
+
+        AfterAll {
+            $Global:ConfirmPreference = $Global:origConfirmPref
         }
         
         AfterEach {
@@ -24,38 +30,38 @@ Describe "Feature tests for module $Script:ModuleName" {
 
         It "Should successfully run a speed test against a valid public iPerf3 server with a saved configuration" {
             Set-SpeedTestConfig -InternetServer "iperf.he.net" -InternetPort "5201"
-            {Invoke-SpeedTest -Internet -PassThru -Force} | Should -Not -Throw
+            {Invoke-SpeedTest -Internet -PassThru} | Should -Not -Throw
         }
 
         It "Should successfully run a speed test against a valid public iPerf3 server with a saved configuration using default port '5201'" {
             Set-SpeedTestConfig -InternetServer "iperf.he.net"
-            {Invoke-SpeedTest -Internet -PassThru -Force} | Should -Not -Throw
+            {Invoke-SpeedTest -Internet -PassThru} | Should -Not -Throw
         }
 
         It "Should successfully run a speed test against a valid public iPerf3 server using specified Server/Port parameters" {
-            {Invoke-SpeedTest -Server "iperf.he.net" -Port "5201" -PassThru -Force} | Should -Not -Throw
+            {Invoke-SpeedTest -Server "iperf.he.net" -Port "5201" -PassThru} | Should -Not -Throw
         }
         
         It "Should successfully run a speed test against a valid public iPerf3 server using specified Server parameter and default port '5201'" {
-            {Invoke-SpeedTest -Server "iperf.he.net" -PassThru -Force} | Should -Not -Throw
+            {Invoke-SpeedTest -Server "iperf.he.net" -PassThru} | Should -Not -Throw
         }
 
         It "Should throw an error when running a speed test against an invalid public iPerf3 server with a saved configuration" {
             Set-SpeedTestConfig -InternetServer "test.local.com"
-            {Invoke-SpeedTest -Internet -PassThru -Force} | Should -Throw
+            {Invoke-SpeedTest -Internet -PassThru} | Should -Throw
         }
 
         It "Should throw an error when running a speed test against a valid public iPerf3 server with a saved configuration using an invalid port" {
             Set-SpeedTestConfig -InternetServer "test.local.com" -InternetPort "7777"
-            {Invoke-SpeedTest -Internet -PassThru -Force} | Should -Throw
+            {Invoke-SpeedTest -Internet -PassThru} | Should -Throw
         }
 
         It "Should throw an error when running a speed test against an invalid public iPerf3 server/port using specified Server/Port parameters" {
-            {Invoke-SpeedTest -Server "test.local.com" -Port "7777" -PassThru -Force} | Should -Throw
+            {Invoke-SpeedTest -Server "test.local.com" -Port "7777" -PassThru} | Should -Throw
         }
 
         It "Should throw an error when running a speed test against an invalid public iPerf3 server using specified Server parameter" {
-            {Invoke-SpeedTest -Server "test.local.com" -PassThru -Force} | Should -Throw
+            {Invoke-SpeedTest -Server "test.local.com" -PassThru} | Should -Throw
         }
     }
 
@@ -66,7 +72,7 @@ Describe "Feature tests for module $Script:ModuleName" {
         }
 
         It "Should install iPerf3 scheduled task listener on local computer" {
-            {Install-SpeedTestServer -Force} | Should -Not -Throw
+            {Install-SpeedTestServer} | Should -Not -Throw
         }
     }
 }
