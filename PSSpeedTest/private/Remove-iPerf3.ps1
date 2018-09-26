@@ -15,4 +15,10 @@ function Remove-iPerf3 {
 
     )
 
+    try {
+        Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' | Uninstall-Package
+    }
+    catch {
+        Write-Verbose -Message "Package 'iperf3' not found as installed by ChocolateyGet provider - no action taken."
+    }
 }
