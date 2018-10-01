@@ -16,4 +16,12 @@ function Remove-iPerf3Task {
 
     )
 
+    Write-Verbose -Message "Unregistering iPerf3 scheduled task."
+
+    try {
+        Get-ScheduledTask -TaskName 'iPerf3 Server' | Unregister-ScheduledTask
+    }
+    catch {
+        Write-Verbose -Message "Scheduled task not found - no action taken."
+    }
 }

@@ -16,4 +16,13 @@ function Remove-iPerf3Port {
 
     )
 
+    Write-Verbose -Message "Removing inbound and outbound iperf3 firewall rules."
+
+    try {
+        Get-NetFirewallRule -DisplayName "iPerf3 Server Inbound TCP Rule" | Remove-NetFirewallRule
+        Get-NetFirewallRule -DisplayName "iPerf3 Server Outbound TCP Rule" | Remove-NetFirewallRule
+    }
+    catch {
+        Write-Verbose -Message "Firewall rules not found - no action taken."
+    }
 }

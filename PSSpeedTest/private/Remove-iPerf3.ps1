@@ -15,6 +15,8 @@ function Remove-iPerf3 {
 
     )
 
+    Write-Verbose -Message "Removing 'iperf3' package."
+
     try {
         Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' | Uninstall-Package
     }
