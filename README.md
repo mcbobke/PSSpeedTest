@@ -35,7 +35,7 @@ Runs a speed test against a server that is running iPerf3. The `-Internet` or `-
 
 ### Install-SpeedTestServer
 
-Sets up iPerf3 as a server process on this machine or another Windows domain-joined computer (if `-ComputerName` is specified). This performs the following:
+Sets up iPerf3 as a server process on the local computer. This performs the following:
 
 * Installs the `ChocolateyGet` PackageProvider if not already present.
 * Installs the `iPerf3` package if not already present.
