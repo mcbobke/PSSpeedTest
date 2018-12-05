@@ -1,40 +1,20 @@
 <#
     .SYNOPSIS
-    Removes iPerf3 server configuration from the local or a domain computer.
+    Removes iPerf3 server configuration from the local computer.
 
     .DESCRIPTION
-    Removes iPerf3 server configuration from the local or a domain computer.
+    Removes iPerf3 server configuration from the local computer.
     This includes the iPerf3 package, firewall rules, and scheduled task.
-
-    .PARAMETER ComputerName
-    The name of the domain computer that is acting as an iPerf3 server.
-    If this parameter is not specified, the local computer will be targeted.
-
-    .PARAMETER Credential
-    Domain credentials used to authenticate to a domain computer, if necessary.
-
-    .EXAMPLE
-    Remove-SpeedTestServer -ComputerName SERVER01 -Credential domain\user
-    Decommissions iPerf3 server SERVER01.
-    This runs the appropriate setup functions under the 'domain\user' credential.
 
     .EXAMPLE
     Remove-SpeedTestServer
     Decommissions the local iPerf3 server.
-
-    .EXAMPLE
-    Install-SpeedTestServer -Port 5555 -PassThru
 #>
 
 function Remove-SpeedTestServer {
     [CmdletBinding()]
     Param (
-        [ValidateNotNullOrEmpty()]
-        [String]
-        $ComputerName,
-        [ValidateNotNullOrEmpty()]
-        [PSCredential]
-        $Credential
+
     )
 
     $timeout = 30 # Seconds
@@ -47,8 +27,15 @@ function Remove-SpeedTestServer {
 
     # Remove scheduled task before stopping process to prevent auto-trigger
     Remove-iPerf3Task
+
     Write-Verbose -Message "Stopping iPerf3 process."
-    Get-Process -Name 'iperf3' | Stop-Process
+    try {
+        Get-Process -Name 'iperf3' | Stop-Process
+    }
+    catch {
+        Write-Verbose -Message "iPerf3 process not found - no action taken."
+    }
+
     Remove-iPerf3Port
     Remove-iPerf3
 
