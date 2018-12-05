@@ -17,6 +17,7 @@ Describe "Unit tests for $Script:ModuleName" {
     # Mocking as these functions will call over the network
     Mock Invoke-SpeedTest {return 0}
     Mock Install-SpeedTestServer {return 0}
+    Mock Remove-SpeedTestServer {return 0}
     
     BeforeAll {
         Get-Module -All -Name $Script:ModuleName | Remove-Module -Force -ErrorAction 'Ignore'
@@ -236,6 +237,12 @@ Describe "Unit tests for $Script:ModuleName" {
 
         It "Should throw an error if Credential parameter is used but null" {
             {Install-SpeedTestServer -ComputerName "local.domain.com" -Port "5201" -Credential $null} | Should -Throw
+        }
+    }
+
+    Context "Remove-SpeedTestServer" {
+        It "Should not throw an error" {
+            {Remove-SpeedTestServer} | Should -Not -Throw
         }
     }
 }
