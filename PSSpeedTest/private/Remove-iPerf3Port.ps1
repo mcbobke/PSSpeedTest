@@ -12,9 +12,7 @@
 
 function Remove-iPerf3Port {
     [CmdletBinding()]
-    Param(
-
-    )
+    Param()
 
     Write-Verbose -Message "Removing inbound and outbound iperf3 firewall rules."
 

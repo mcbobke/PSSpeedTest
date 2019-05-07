@@ -5,7 +5,7 @@ $scripts = Get-ChildItem $Script:ModuleRoot -Include *.ps1, *.psm1, *.psd1 -Recu
 Describe "General project validation: $Script:ModuleName" {
     # TestCases are splatted to the script so we need hashtables
     $testCase = $scripts | Foreach-Object {@{file = $_}}
-    It "Script <file> should be valid powershell" -TestCases $testCase {
+    It "Script <file> should be valid PowerShell" -TestCases $testCase {
         param($file)
 
         $file.fullname | Should -Exist
@@ -14,10 +14,6 @@ Describe "General project validation: $Script:ModuleName" {
         $errors = $null
         $null = [System.Management.Automation.PSParser]::Tokenize($contents, [ref]$errors)
         $errors.Count | Should -Be 0
-    }
-
-    It "Module '$Script:ModuleName' can import cleanly" {
-        {Import-Module "$Script:ModuleRoot\$Script:ModuleName.psm1" -Force} | Should -Not -Throw
     }
 }
 

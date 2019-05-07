@@ -10,15 +10,13 @@
 #>
 
 function Remove-iPerf3 {
-    [CmdletBinding(SupportsShouldProcess=$True,ConfirmImpact="High")]
-    Param (
-
-    )
+    [CmdletBinding()]
+    Param ()
 
     Write-Verbose -Message "Removing 'iperf3' package."
 
     try {
-        Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' | Uninstall-Package
+        Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' | Uninstall-Package -Force
     }
     catch {
         Write-Verbose -Message "Package 'iperf3' not found as installed by ChocolateyGet provider - no action taken."

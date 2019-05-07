@@ -16,7 +16,7 @@
 #>
 
 function Install-ChocolateyGetProvider {
-    [CmdletBinding(SupportsShouldProcess=$True,ConfirmImpact="High")]
+    [CmdletBinding(SupportsShouldProcess=$True,ConfirmImpact="Medium")]
     Param (
         [Switch]
         $PassThru

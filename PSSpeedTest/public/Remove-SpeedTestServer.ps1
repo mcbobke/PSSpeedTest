@@ -13,9 +13,7 @@
 
 function Remove-SpeedTestServer {
     [CmdletBinding()]
-    Param (
-
-    )
+    Param ()
 
     $timeout = 30 # Seconds
 

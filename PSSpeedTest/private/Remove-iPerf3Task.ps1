@@ -12,9 +12,7 @@
 
 function Remove-iPerf3Task {
     [CmdletBinding()]
-    Param(
-
-    )
+    Param()
 
     Write-Verbose -Message "Unregistering iPerf3 scheduled task."
 
