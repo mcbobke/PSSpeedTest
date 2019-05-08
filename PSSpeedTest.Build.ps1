@@ -3,11 +3,89 @@ Param(
 )
 
 Task Default Build, Test, Distribute
-Task Build CopyOutput, BuildPSM1, BuildPSD1
+Task Build CopyOutput, GetReleasedModuleInfo, BuildPSM1, BuildPSD1
+
+function ReadPreviousRelease {
+    Param (
+        [Parameter(Mandatory)]
+        [string]
+        $Name,
+        [Parameter(Mandatory)]
+        [string]
+        $Repository,
+        [Parameter(Mandatory)]
+        [string]
+        $Path
+    )
+
+    $ModuleReader = {
+        Param (
+            [string]
+            $Name,
+            [string]
+            $Repository,
+            [string]
+            $Path
+        )
+
+        try {
+            Save-Module -Name $Name -Path $Path -Repository $Repository -ErrorAction Stop
+            Import-Module -Name "$Path\$Name" -PassThru -ErrorAction Stop
+        }
+        catch {
+            if ($_ -match "No match was found for the specified search criteria") {
+                @()
+            }
+            else {
+                $_
+            }
+        }
+    }
+
+    $parameters = @{
+        Name = $Name;
+        Repository = $Repository;
+        Path = $Path;
+    }
+
+    # Runspace is used to avoid importing old versions of the module in the current session
+    $PowerShellRunspace = [powershell]::Create()
+    $null = $PowerShellRunspace.AddScript($ModuleReader).AddParameters($parameters)
+
+    return $PowerShellRunspace.Invoke()
+}
+
+function GetPublicFunctionInterfaces {
+    Param (
+        [System.Management.Automation.FunctionInfo[]]
+        $FunctionList
+    )
+
+    $functionInterfaces = New-Object -TypeName System.Collections.ArrayList
+
+    foreach ($function in $FunctionList) {
+        foreach ($parameter in $function.Parameters.Keys) {
+            Write-Verbose "$($function.Name)"
+            Write-Verbose "$($function.Parameters[$parameter].Name)"
+            $toAdd = "{0}:{1}" -f $function.Name, $function.Parameters[$parameter].Name
+            $functionInterfaces.Add($toAdd)
+            
+            foreach ($alias in $function.Parameters[$parameter].Aliases) {
+                Write-Verbose "$($function.Name)"
+                Write-Verbose "$($alias)"
+                $toAdd = "{0}:{1}" -f $function.Name, $alias
+                $functionInterfaces.Add($toAdd)
+            }
+        }
+    }
+
+    return $functionInterfaces
+}
 
 function PublishTestResults {
     Param (
-        [string]$Path
+        [string]
+        $Path
     )
 
     if ($Env:BHBuildSystem -eq 'Unknown')
@@ -70,6 +148,37 @@ Task CopyOutput {
         ForEach-Object {"   Creating directory (recursive) [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
 }
 
+Task GetReleasedModuleInfo {
+    $downloadPath = "$Script:Output\releasedModule"
+    if (!(Test-Path $downloadPath)) {
+        $null = New-Item -Path $downloadPath -ItemType Directory
+    }
+
+    $releasedModule = ReadPreviousRelease -Name $Script:ModuleName -Repository $Script:publishToRepo -Path $downloadPath
+
+    if (($releasedModule -ne $null) -and ($releasedModule.GetType() -eq [System.Management.Automation.ErrorRecord])) {
+        Write-Error $releasedModule
+        return
+    }
+
+    $moduleInfo = $null
+
+    if ($releasedModule -eq $null) {
+        $moduleInfo = [PSCustomObject] @{
+            Version = [Version]::New(0, 0, 1)
+            FunctionInterfaces = New-Object -TypeName System.Collections.ArrayList
+        }
+    }
+    else {
+        $moduleInfo = [PSCustomObject] @{
+            Version = $releasedModule.Version
+            FunctionInterfaces = GetPublicFunctionInterfaces -FunctionList $releasedModule.ExportedFunctions.Values
+        }
+    }
+
+    $moduleInfo | Export-Clixml -Path "$Script:Output\released-module-info.xml"
+}
+
 Task BuildPSM1 {
     [System.Text.StringBuilder]$StringBuilder = [System.Text.StringBuilder]::new()
     foreach ($folder in $Script:Imports)
@@ -103,21 +212,52 @@ Task BuildPSD1 {
     Set-ModuleFunctions -Name $Script:ManifestPath -FunctionsToExport $moduleFunctions
     Set-ModuleAliases -Name $Script:ManifestPath
 
-    $currentModule = Find-Module -Name $Script:ModuleName -Repository $Env:PublishToRepo -ErrorAction 'SilentlyContinue'
-    if ($currentModule -and ($currentModule.GetType().BaseType -ne 'System.Array')) {
-        $currentVersion = $currentModule.Version
-        Write-Output "  Previous publish found - current version: $currentVersion"
+    $releasedModuleInfo = Import-Clixml -Path "$Script:Output\released-module-info.xml"
+    Get-Module -Name $Script:ModuleName -All | Remove-Module -Force -ErrorAction 'Ignore'
+    $newFunctionList = (Import-Module -Name "$Script:ModulePath" -PassThru).ExportedFunctions.Values
+    Get-Module -Name $Script:ModuleName -All | Remove-Module -Force -ErrorAction 'Ignore'
+    $newFunctionInterfaces = GetPublicFunctionInterfaces -FunctionList $newFunctionList
+    $oldFunctionInterfaces = $releasedModuleInfo.FunctionInterfaces
+
+    Write-Output "  Detecting new features"
+    foreach ($interface in $newFunctionInterfaces) {
+        if ($interface -notin $oldFunctionInterfaces) {
+            $VersionIncrement = 'Minor'
+            Write-Output "      $interface"
+        }
+    }
+    Write-Output "  Detecting lost features (breaking changes)"
+    foreach ($interface in $oldFunctionInterfaces) {
+        if ($interface -notin $newFunctionInterfaces) {
+            $VersionIncrement = 'Major'
+            Write-Output "      $interface"
+        }
+    }
+    
+    $version = [Version](Get-Metadata -Path $Script:ManifestPath -PropertyName "ModuleVersion")
+
+    # Don't bump major version if in pre-release
+    if ($version -lt ([Version]"1.0.0")) {
+        if ($VersionIncrement -eq 'Major') {
+            $VersionIncrement = 'Minor'
+        }
+        else {
+            $VersionIncrement = 'Patch'
+        }
+    }
+
+    $releasedVersion = $releasedModuleInfo.Version
+    if ($version -lt $releasedVersion) {
+        $version = $releasedVersion
+    }
+    if ($version -eq $releasedVersion) {
+        $version = [Version](Step-Version -Version $releasedVersion -By $VersionIncrement)
+        Write-Output "  Stepping module from released version [$releasedVersion] to new version [$version] by [$VersionIncrement]"
+        Update-Metadata -Path $Script:ManifestPath -PropertyName 'ModuleVersion' -Value $version
     }
     else {
-        $currentVersion = [Version](Get-Metadata -Path $Script:ManifestPath -PropertyName 'ModuleVersion')
-        Write-Output "  Previous publish not found - current version: $currentVersion"
+        Write-Output "  Using version from $Script:ModuleName.psd1: $version"
     }
-    if ($Env:BHCommitMessage -match '!(major|minor)') {
-        $VersionIncrement = $Matches[1]
-    }
-    $newVersion = [Version](Step-Version -Version $currentVersion -By $VersionIncrement)
-    Write-Output "  Stepping module from current version [$currentVersion] to new version [$newVersion] by [$VersionIncrement]"
-    Update-Metadata -Path $Script:ManifestPath -PropertyName 'ModuleVersion' -Value $newVersion
 }
 
 Task Test {
