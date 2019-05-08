@@ -42,6 +42,10 @@ Sets up iPerf3 as a server process on the local computer. This performs the foll
 * Sets the inbound/outbound firewall rules for the given port (5201 if the `-Port` parameter is not used.)
 * Creates a Scheduled Task to run `iperf3.exe` with the necessary parameters for server usage on computer startup.
 
+### Remove-SpeedTestServer
+
+Removes all items configured by `Install-SpeedTestServer` with the exception of the `ChocolateyGet` PackageProvider.
+
 ## Building
 
 `.\build.ps1`
