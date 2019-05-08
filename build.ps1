@@ -19,7 +19,7 @@ if (!(Get-InstalledModule -Name 'PSDepend' -RequiredVersion $PSDependVersion -Er
 Import-Module -Name 'PSDepend' -RequiredVersion $PSDependVersion
 Invoke-PSDepend -Path "$PSScriptRoot\build.Depend.psd1" -Install -Import -Force
 
-Invoke-Build -Task $Task -Result BuildResult -VersionIncrement $VersionIncrement -Verbose -Debug
+Invoke-Build -Task $Task -Result BuildResult -VersionIncrement $VersionIncrement
 
 if ($BuildResult.Errors) {
     foreach($t in $Result.Tasks) {
