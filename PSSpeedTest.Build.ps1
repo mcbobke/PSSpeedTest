@@ -3,7 +3,7 @@ Param(
 )
 
 Task Default Build, Test, Distribute
-Task Build CopyOutput, BuildPSM1, BuildPSD1
+Task Build CopyOutput, GetReleasedModuleInfo, BuildPSM1, BuildPSD1
 
 function ReadPreviousRelease {
     Param (
