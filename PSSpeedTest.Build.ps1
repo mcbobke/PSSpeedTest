@@ -35,8 +35,8 @@ function ReadPreviousRelease {
             Set-Item -Path "Env:\PSModulePath" -Value $fullPaths -ErrorAction Stop #>
 
             #try {
-            Save-Module -Name $Name -Path $Path -Repository $Repository -ErrorAction Stop
-            Import-Module -Name "$Path\$Name" -PassThru -ErrorAction Stop
+            Save-Module -Name $Name -Path $Path -Repository $Repository -ErrorAction Stop -Verbose
+            Import-Module -Name "$Path\$Name" -PassThru -ErrorAction Stop -Verbose
             #}
             <# finally {
                 Set-Item -Path "Env:\PSModulePath" -Value $originalModulePath -ErrorAction Stop
