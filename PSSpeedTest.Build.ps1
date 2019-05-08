@@ -76,13 +76,13 @@ function GetPublicFunctionInterfaces {
 
     foreach ($function in $FunctionList) {
         foreach ($parameter in $function.Parameters.Keys) {
-            Write-Output "$($function.Name)"
-            Write-Output "$($function.Parameters[$parameter].Name)"
+            Write-Verbose "$($function.Name)"
+            Write-Verbose "$($function.Parameters[$parameter].Name)"
             $functionInterfaces.Add("{0}:{1}" -f $function.Name, $function.Parameters[$parameter].Name)
             
             foreach ($alias in $function.Parameters[$parameter].Aliases) {
-                Write-Output "$($function.Name)"
-                Write-Output "$($alias)"
+                Write-Verbose "$($function.Name)"
+                Write-Verbose "$($alias)"
                 $functionInterfaces.Add("{0}:{1}" -f $function.Name, $alias)
             }
         }
