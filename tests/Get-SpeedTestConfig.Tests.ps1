@@ -5,11 +5,11 @@ $Script:ConfigPath = Join-Path -Path $Script:ModuleRoot -ChildPath "config.json"
 Describe "Get-SpeedTestConfig (Public)" {
     Context "Get-SpeedTestConfig" {
         It "Should return a valid object with expected items" {
-            $result = Get-SpeedTestConfig -PassThru
-            $result.defaultLocalServer.defaultServer | Should -BeNullOrEmpty
-            $result.defaultLocalServer.defaultPort | Should -BeNullOrEmpty
-            $result.defaultInternetServer.defaultServer | Should -BeNullOrEmpty
-            $result.defaultInternetServer.defaultPort | Should -BeNullOrEmpty
+            $result = Get-SpeedTestConfig
+            $result.DefaultLocalServer | Should -BeNullOrEmpty
+            $result.DefaultLocalPort | Should -BeNullOrEmpty
+            $result.DefaultInternetServer | Should -BeNullOrEmpty
+            $result.DefaultInternetPort.defaultPort | Should -BeNullOrEmpty
         }
 
         It "Should throw if the expected file does not exist" {
