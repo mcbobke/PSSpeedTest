@@ -66,7 +66,8 @@ function Set-SpeedTestConfig {
 
     try {
         Write-Verbose -Message "Trying Get-SpeedTestConfig before Set-SpeedTestConfig."
-        $config = Get-SpeedTestConfig -PassThru
+        $config = Get-Content -Path "$($PSScriptRoot | Split-Path -Parent)\config.json" -ErrorAction "Stop" |
+                    ConvertFrom-Json
         Write-Verbose -Message "Stored config.json found."
     }
     catch {

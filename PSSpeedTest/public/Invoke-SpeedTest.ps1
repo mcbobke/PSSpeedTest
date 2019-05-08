@@ -65,9 +65,7 @@ function Invoke-SpeedTest {
         [Parameter(ParameterSetName="Specified")]
         [ValidateNotNullOrEmpty()]
         [String]
-        $Port,
-        [Switch]
-        $PassThru
+        $Port
     )
 
     Write-Verbose -Message "Starting speed test."
@@ -75,7 +73,7 @@ function Invoke-SpeedTest {
     Install-ChocolateyGetProvider
     Install-iPerf3
 
-    $config = Get-SpeedTestConfig -PassThru
+    $config = Get-Content -Path "$($PSScriptRoot | Split-Path -Parent)\config.json" -ErrorAction "Stop" | ConvertFrom-Json
     $command = "iperf3.exe "
     $usedServer = ""
     $usedPort = ""
@@ -158,17 +156,10 @@ function Invoke-SpeedTest {
         $megabitsPerSecReceived = (($resultsPS.end.sum_received.bits_per_second) / 1000000.0).ToInt32($null)
     }
 
-    if ($PassThru) {
-        $returnObj = New-Object -TypeName 'PSCustomObject' @{
-            megabitsPerSecSent = $megabitsPerSecSent;
-            megabitsPerSecReceived = $megabitsPerSecReceived;
-        }
+    $returnObj = New-Object -TypeName 'PSCustomObject' @{
+        megabitsPerSecSent = $megabitsPerSecSent;
+        megabitsPerSecReceived = $megabitsPerSecReceived;
+    }
 
-        return $returnObj
-    }
-    else {
-        Write-Host "Results of speed test against server '$usedServer' on port '$usedPort':"
-        Write-Host "    Send speed: $megabitsPerSecSent mbps"
-        Write-Host "    Receive speed: $megabitsPerSecReceived mbps"
-    }
+    return $returnObj
 }
