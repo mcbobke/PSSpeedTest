@@ -57,7 +57,6 @@ function ReadPreviousRelease {
 
 function GetPublicFunctionInterfaces {
     Param (
-        [Parameter(ValueFromPipeline)]
         [System.Management.Automation.FunctionInfo[]]
         $FunctionList
     )
@@ -85,7 +84,8 @@ function GetPublicFunctionInterfaces {
 
 function PublishTestResults {
     Param (
-        [string]$Path
+        [string]
+        $Path
     )
 
     if ($Env:BHBuildSystem -eq 'Unknown')
@@ -172,7 +172,7 @@ Task GetReleasedModuleInfo {
     else {
         $moduleInfo = [PSCustomObject] @{
             Version = $releasedModule.Version
-            FunctionInterfaces = $releasedModule.ExportedFunctions.Values | GetPublicFunctionInterfaces
+            FunctionInterfaces = GetPublicFunctionInterfaces -FunctionList $releasedModule.ExportedFunctions.Values
         }
     }
 
@@ -216,7 +216,7 @@ Task BuildPSD1 {
     Get-Module -Name $Script:ModuleName -All | Remove-Module -Force -ErrorAction 'Ignore'
     $newFunctionList = (Import-Module -Name "$Script:ModulePath" -PassThru).ExportedFunctions.Values
     Get-Module -Name $Script:ModuleName -All | Remove-Module -Force -ErrorAction 'Ignore'
-    $newFunctionInterfaces = $newFunctionList | GetPublicFunctionInterfaces
+    $newFunctionInterfaces = GetPublicFunctionInterfaces -FunctionList $newFunctionList
     $oldFunctionInterfaces = $releasedModuleInfo.FunctionInterfaces
 
     Write-Output "  Detecting new features"
