@@ -29,18 +29,8 @@ function ReadPreviousRelease {
         )
 
         try {
-            <# $originalModulePath = Get-Item -Path "Env:\PSModulePath" | Select-Object -ExpandProperty Value
-            $modulePaths = $originalModulePath -split ';' | Where-Object {$_ -ne $Path}
-            $fullPaths = (@($Path) + @($modulePaths) | Select-Object -Unique) -join ';'
-            Set-Item -Path "Env:\PSModulePath" -Value $fullPaths -ErrorAction Stop #>
-
-            #try {
-            Save-Module -Name $Name -Path $Path -Repository $Repository -ErrorAction Stop -Verbose
-            Import-Module -Name "$Path\$Name" -PassThru -ErrorAction Stop -Verbose
-            #}
-            <# finally {
-                Set-Item -Path "Env:\PSModulePath" -Value $originalModulePath -ErrorAction Stop
-            } #>
+            Save-Module -Name $Name -Path $Path -Repository $Repository -ErrorAction Stop
+            Import-Module -Name "$Path\$Name" -PassThru -ErrorAction Stop
         }
         catch {
             if ($_ -match "No match was found for the specified search criteria") {

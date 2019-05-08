@@ -16,8 +16,8 @@
 function Get-SpeedTestConfig {
     [CmdletBinding()]
     Param(
-        [Switch]
-        $PassThru
+        [string]
+        $test
     )
 
     try {
