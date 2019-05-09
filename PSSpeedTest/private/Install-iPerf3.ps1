@@ -16,7 +16,7 @@
 #>
 
 function Install-iPerf3 {
-    [CmdletBinding(SupportsShouldProcess=$True,ConfirmImpact="Medium")]
+    [CmdletBinding(SupportsShouldProcess=$True,ConfirmImpact="High")]
     Param (
         [Switch]
         $PassThru
@@ -59,7 +59,7 @@ function Install-iPerf3 {
         ErrorAction = 'SilentlyContinue';
         Confirm = $false;
     }
-    if ($PSCmdlet.ShouldProcess($PackageParams['Name'], 'Install-Package')) {
+    if ($PSCmdlet.ShouldContinue("Can package $($PackageParams['Name']) be installed?", 'Installing iPerf3')) {
         Install-Package @PackageParams | Out-Null
     }
 

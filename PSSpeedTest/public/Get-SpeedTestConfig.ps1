@@ -4,13 +4,9 @@
 
     .DESCRIPTION
     Get the default server configurations for Internet and Local speed test servers.
-    If '-PassThru' is used, converts the JSON configuration file into a PSCustomObject.
 
     .EXAMPLE
     Get-SpeedTestConfig
-
-    .EXAMPLE
-    Get-SpeedTestConfig -PassThru
 #>
 
 function Get-SpeedTestConfig {

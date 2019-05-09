@@ -16,7 +16,7 @@
 #>
 
 function Install-ChocolateyGetProvider {
-    [CmdletBinding(SupportsShouldProcess=$True,ConfirmImpact="Medium")]
+    [CmdletBinding(SupportsShouldProcess=$True,ConfirmImpact="High")]
     Param (
         [Switch]
         $PassThru
@@ -43,7 +43,7 @@ function Install-ChocolateyGetProvider {
     }
 
     Write-Verbose -Message 'Installing ChocolateyGet PackageProvider as it was not found.'
-    if ($PSCmdlet.ShouldProcess($PackageProviderParams['Name'], 'Install-PackageProvider')) {
+    if ($PSCmdlet.ShouldContinue("Can package provider $($PackageProviderParams['Name']) be installed?", "Installing ChocolateyGet")) {
         Install-PackageProvider @PackageProviderParams | Out-Null
     }
     
