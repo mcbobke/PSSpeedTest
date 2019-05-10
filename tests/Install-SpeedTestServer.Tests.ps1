@@ -1,9 +1,6 @@
 Describe "Install-SpeedTestServer (Public)" {
     Context "Install-SpeedTestServer" {
         It "Should install iPerf3 scheduled task listener on local computer" {
-            $oldConfirmPreference = $ConfirmPreference
-            $ConfirmPreference = 'None'
-
             Install-SpeedTestServer
 
             $result = Get-PackageProvider -ListAvailable -Name 'ChocolateyGet' |
@@ -29,8 +26,6 @@ Describe "Install-SpeedTestServer (Public)" {
             $result = Get-Process -Name 'iperf3' | 
                 Select-Object -ExpandProperty 'ProcessName'
             $result | Should -Be 'iperf3'
-
-            $ConfirmPreference = $oldConfirmPreference
         }
     }
 }

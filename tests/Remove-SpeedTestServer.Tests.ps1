@@ -1,9 +1,6 @@
 Describe "Remove-SpeedTestServer (Public)" {
     Context "Remove-SpeedTestServer" {
         It "Should remove iPerf3 scheduled task listener on local computer" {
-            $oldConfirmPreference = $ConfirmPreference
-            $ConfirmPreference = 'None'
-
             Install-SpeedTestServer
             Remove-SpeedTestServer
             
@@ -27,8 +24,6 @@ Describe "Remove-SpeedTestServer (Public)" {
             $result = Get-Process -Name 'iperf3' `
                         -ErrorAction 'SilentlyContinue'
             $result | Should -BeNullOrEmpty
-
-            $ConfirmPreference = $oldConfirmPreference
         }
     }
 }

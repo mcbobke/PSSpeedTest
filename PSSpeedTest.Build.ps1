@@ -126,6 +126,7 @@ Enter-Build {
     $Script:Imports = ('public', 'private')
     $Script:TestFile = "$PSScriptRoot\output\TestResults_PS$PSVersion.xml"
     $Global:TestThisModule = $Script:ManifestPath
+    $Global:ConfirmPreference = 'None'
 }
 
 Task Clean {
