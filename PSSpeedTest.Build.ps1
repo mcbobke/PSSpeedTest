@@ -263,6 +263,8 @@ Task BuildPSD1 {
 Task Test {
     Get-Module -All -Name $Script:ModuleName | Remove-Module -Force -ErrorAction 'Ignore'
     Import-Module -Name $Global:TestThisModule
+    $origConfirmPreference = $Global:ConfirmPreference
+    $Global:ConfirmPreference = 'None'
 
     $pesterParams = @{
         PassThru = $true;
@@ -272,6 +274,7 @@ Task Test {
     }
     $testResults = Invoke-Pester @pesterParams
 
+    $Global:ConfirmPreference = $origConfirmPreference
     PublishTestResults -Path $Script:TestFile
     assert ($testResults.FailedCount -eq 0) "There was [$($testResults.FailedCount)] failed test(s)."
 }
