@@ -126,6 +126,7 @@ Enter-Build {
     $Script:Imports = ('public', 'private')
     $Script:TestFile = "$PSScriptRoot\output\TestResults_PS$PSVersion.xml"
     $Global:TestThisModule = $Script:ManifestPath
+    $Global:ConfirmPreference = 'None'
 }
 
 Task Clean {
@@ -263,8 +264,6 @@ Task BuildPSD1 {
 Task Test {
     Get-Module -All -Name $Script:ModuleName | Remove-Module -Force -ErrorAction 'Ignore'
     Import-Module -Name $Global:TestThisModule
-    $origConfirmPreference = $Global:ConfirmPreference
-    $Global:ConfirmPreference = 'None'
 
     $pesterParams = @{
         PassThru = $true;
@@ -274,7 +273,6 @@ Task Test {
     }
     $testResults = Invoke-Pester @pesterParams
 
-    $Global:ConfirmPreference = $origConfirmPreference
     PublishTestResults -Path $Script:TestFile
     assert ($testResults.FailedCount -eq 0) "There was [$($testResults.FailedCount)] failed test(s)."
 }
