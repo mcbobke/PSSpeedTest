@@ -43,7 +43,7 @@ function Install-ChocolateyGetProvider {
     }
 
     Write-Verbose -Message 'Installing ChocolateyGet PackageProvider as it was not found.'
-    if ($PSCmdlet.ShouldContinue("Can package provider $($PackageProviderParams['Name']) be installed?", "Installing ChocolateyGet")) {
+    if ($PSCmdlet.ShouldProcess($PackageProviderParams['Name'], "Install-PackageProvider")) {
         Install-PackageProvider @PackageProviderParams | Out-Null
     }
     
