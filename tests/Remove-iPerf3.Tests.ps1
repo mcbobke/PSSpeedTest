@@ -2,6 +2,9 @@ InModuleScope PSSpeedTest {
     Describe "Remove-iPerf3 (Private)" {
         Context "Remove-iPerf3" {
             It "Should remove iPerf3 package" {
+                $oldConfirmPreference = $ConfirmPreference
+                $ConfirmPreference = 'None'
+                
                 Install-iPerf3
                 Get-Process -Name 'iperf3' | Stop-Process -Force # Stopping process to prevent file lock
                 Remove-iPerf3
@@ -10,6 +13,8 @@ InModuleScope PSSpeedTest {
                             -ProviderName 'ChocolateyGet' `
                             -ErrorAction 'SilentlyContinue'
                 $result | Should -BeNullOrEmpty
+
+                $ConfirmPreference = $oldConfirmPreference
             }
         }
     }

@@ -2,6 +2,9 @@ InModuleScope PSSpeedTest {
     Describe "Remove-iPerf3Port (Private)" {
         Context "Remove-iPerf3Port" {
             It "Should remove the iPerf3 NetFirewallRule" {
+                $oldConfirmPreference = $ConfirmPreference
+                $ConfirmPreference = 'None'
+
                 Set-iPerf3Port -Port "5201"
                 Remove-iPerf3Port
 
@@ -14,6 +17,8 @@ InModuleScope PSSpeedTest {
                     -DisplayName 'iPerf3 Server Outbound TCP Rule' `
                     -ErrorAction 'SilentlyContinue'
                 $result | Should -BeNullOrEmpty
+
+                $ConfirmPreference = $oldConfirmPreference
             }
         }
     }
