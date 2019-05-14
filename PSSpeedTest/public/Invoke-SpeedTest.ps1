@@ -20,9 +20,6 @@
     The port on the iPerf3 server that iPerf3 is listening on.
     This will run the local iPerf3 client on the same port as they must match on the client and the server.
     If Server is specified and Port is not, the default port '5201' will be used.
-    
-    .PARAMETER PassThru
-    Returns a PSCustomObject with the send/receive speeds as properties.
 
     .EXAMPLE
     Invoke-SpeedTest -Internet

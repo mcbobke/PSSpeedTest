@@ -59,7 +59,7 @@ function Install-iPerf3 {
         ErrorAction = 'SilentlyContinue';
         Confirm = $false;
     }
-    if ($PSCmdlet.ShouldProcess($PackageParams['Name'], 'Install-Package')) {
+    if ($PSCmdlet.ShouldProcess($PackageParams['Name'], "Install-Package")) {
         Install-Package @PackageParams | Out-Null
     }
 
