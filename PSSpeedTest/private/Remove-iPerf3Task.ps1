@@ -11,13 +11,15 @@
 #>
 
 function Remove-iPerf3Task {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess=$True,ConfirmImpact="Medium")]
     Param()
 
     Write-Verbose -Message "Unregistering iPerf3 scheduled task."
 
     try {
-        Get-ScheduledTask -TaskName 'iPerf3 Server' | Unregister-ScheduledTask
+        if ($PSCmdlet.ShouldProcess("iperf3 Server Scheduled Task", "Unregister-ScheduledTask")) {
+            Get-ScheduledTask -TaskName 'iPerf3 Server' | Unregister-ScheduledTask
+        }
     }
     catch {
         Write-Verbose -Message "Scheduled task not found - no action taken."

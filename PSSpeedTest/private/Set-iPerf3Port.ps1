@@ -20,7 +20,7 @@
 #>
 
 function Set-iPerf3Port {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess=$True,ConfirmImpact="Medium")]
     Param(
         [Parameter(Mandatory=$true,Position=0)]
         [ValidateNotNullOrEmpty()]
@@ -50,8 +50,10 @@ function Set-iPerf3Port {
         ErrorAction = "SilentlyContinue";
     }
 
-    $inboundResult = New-NetFirewallRule @FirewallInboundParams
-    $outboundResult = New-NetFirewallRule @FirewallOutboundParams
+    if ($PSCmdlet.ShouldProcess("iperf3 Inbound/Outbound Firewall Rules", "New-NetFirewallRule")) {
+        $inboundResult = New-NetFirewallRule @FirewallInboundParams
+        $outboundResult = New-NetFirewallRule @FirewallOutboundParams
+    }
 
     if ($inboundResult -and $outboundResult) {
         Write-Verbose -Message 'iPerf3 server port firewall rules set.'

@@ -17,7 +17,7 @@
 #>
 
 function Set-iPerf3Task {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess=$True,ConfirmImpact="Medium")]
     Param(
         [Parameter(Mandatory=$true,Position=0)]
         [ValidateNotNullOrEmpty()]
@@ -48,7 +48,11 @@ function Set-iPerf3Task {
     }
 
     $task = New-ScheduledTask @taskParams
-    Register-ScheduledTask -InputObject $task -TaskName 'iPerf3 Server' -ErrorAction 'SilentlyContinue' | Out-Null
+
+    if ($PSCmdlet.ShouldProcess("iperf3 Server Scheduled Task", "Register-ScheduledTask")) {
+        Register-ScheduledTask -InputObject $task -TaskName 'iPerf3 Server' -ErrorAction 'SilentlyContinue' | Out-Null
+    }
+
     $toReturn = Get-ScheduledTask -TaskName 'iPerf3 Server' -ErrorAction 'SilentlyContinue'
 
     if ($toReturn) {
