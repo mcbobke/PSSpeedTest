@@ -126,7 +126,6 @@ Enter-Build {
     $Script:Imports = ('public', 'private')
     $Script:TestFile = "$PSScriptRoot\output\TestResults_PS$PSVersion.xml"
     $Global:TestThisModule = $Script:ManifestPath
-    $Global:ConfirmPreference = 'None'
 }
 
 Task Clean {
@@ -208,7 +207,7 @@ Task BuildPSD1 {
     Write-Output "  Updating [$Script:ManifestPath]"
     Copy-Item "$Script:Source\$ModuleName.psd1" -Destination $Script:ManifestPath
 
-    $moduleFunctions = Get-ChildItem "$Script:Source\public" -Filter '*.ps1' | `
+    $moduleFunctions = Get-ChildItem -Path "$Script:Source\public" -Filter '*.ps1' | `
         Select-Object -ExpandProperty BaseName
     Set-ModuleFunctions -Name $Script:ManifestPath -FunctionsToExport $moduleFunctions
     Set-ModuleAliases -Name $Script:ManifestPath
