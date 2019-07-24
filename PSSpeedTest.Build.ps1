@@ -193,19 +193,24 @@ Task GetReleasedModuleInfo {
 Task BuildPSM1 {
     [System.Text.StringBuilder]$StringBuilder = [System.Text.StringBuilder]::new()
     foreach ($folder in $Script:Imports) {
-        [void]$StringBuilder.AppendLine("Write-Verbose `"Importing from [`$PSScriptRoot\$folder]`"")
         if (Test-Path "$Script:Source\$folder") {
             $fileList = Get-ChildItem "$Script:Source\$folder" -Filter '*.ps1'
             foreach ($file in $fileList) {
                 $importName = "$folder\$($file.Name)"
                 Write-Output "  Found $importName"
-                [void]$StringBuilder.AppendLine( ". `"`$PSScriptRoot\$importName`"")
+                
+                $filePath = Resolve-Path -Path "$PSScriptRoot\$importName" -ErrorAction 'Ignore'
+                if ($filePath) {
+                    $functionFileEndBlock = [System.Management.Automation.Language.Parser]::ParseFile($filePath, [ref]$null, [ref]$null) |
+                        Select-Object -ExpandProperty 'EndBlock'
+                    
+                    $functionContents = $functionFileEndBlock.ToString()
+
+                    $StringBuilder.AppendLine($functionContents)
+                }
             }
         }
     }
-
-    [void]$StringBuilder.AppendLine("`$publicFunctions = (Get-ChildItem -Path `"`$PSScriptRoot\public`" -Filter '*.ps1').BaseName")
-    [void]$StringBuilder.AppendLine("Export-ModuleMember -Function `$publicFunctions")
     
     Write-Output "  Creating module [$Script:ModulePath]"
     Set-Content -Path $Script:ModulePath -Value $stringbuilder.ToString() 
