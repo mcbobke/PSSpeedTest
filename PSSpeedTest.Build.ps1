@@ -5,8 +5,8 @@ Param(
 Task Default Build, Test, Distribute
 Task Build CopyOutput, GetReleasedModuleInfo, BuildPSM1, BuildPSD1
 
-#region ReadPreviousRelease
-function ReadPreviousRelease {
+#region Read-PreviousRelease
+function Read-PreviousRelease {
     Param (
         [Parameter(Mandatory)]
         [string]
@@ -53,12 +53,12 @@ function ReadPreviousRelease {
     $PowerShellRunspace = [powershell]::Create()
     $null = $PowerShellRunspace.AddScript($ModuleReader).AddParameters($parameters)
 
-    return $PowerShellRunspace.Invoke()
+    $PowerShellRunspace.Invoke()
 }
-#endregion ReadPreviousRelease
+#endregion Read-PreviousRelease
 
-#region GetPublicFunctionInterfaces
-function GetPublicFunctionInterfaces {
+#region Get-PublicFunctionInterfaces
+function Get-PublicFunctionInterfaces {
     Param (
         [System.Management.Automation.FunctionInfo[]]
         $FunctionList
@@ -82,9 +82,9 @@ function GetPublicFunctionInterfaces {
         }
     }
 
-    return $functionInterfaces
+    $functionInterfaces
 }
-#endregion GetPublicFunctionInterfaces
+#endregion Get-PublicFunctionInterfaces
 
 #region PublishTestResults
 function PublishTestResults {
@@ -163,7 +163,7 @@ Task GetReleasedModuleInfo {
         $null = New-Item -Path $downloadPath -ItemType Directory
     }
 
-    $releasedModule = ReadPreviousRelease -Name $Script:ModuleName -Repository $Script:publishToRepo -Path $downloadPath
+    $releasedModule = Read-PreviousRelease -Name $Script:ModuleName -Repository $Script:publishToRepo -Path $downloadPath
 
     if (($releasedModule -ne $null) -and ($releasedModule.GetType() -eq [System.Management.Automation.ErrorRecord])) {
         Write-Error $releasedModule
@@ -181,7 +181,7 @@ Task GetReleasedModuleInfo {
     else {
         $moduleInfo = [PSCustomObject] @{
             Version            = $releasedModule.Version
-            FunctionInterfaces = GetPublicFunctionInterfaces -FunctionList $releasedModule.ExportedFunctions.Values
+            FunctionInterfaces = Get-PublicFunctionInterfaces -FunctionList $releasedModule.ExportedFunctions.Values
         }
     }
 
@@ -226,7 +226,7 @@ Task BuildPSD1 {
     Get-Module -Name $Script:ModuleName -All | Remove-Module -Force -ErrorAction 'Ignore'
     $newFunctionList = (Import-Module -Name "$Script:ModulePath" -PassThru).ExportedFunctions.Values
     Get-Module -Name $Script:ModuleName -All | Remove-Module -Force -ErrorAction 'Ignore'
-    $newFunctionInterfaces = GetPublicFunctionInterfaces -FunctionList $newFunctionList
+    $newFunctionInterfaces = Get-PublicFunctionInterfaces -FunctionList $newFunctionList
     $oldFunctionInterfaces = $releasedModuleInfo.FunctionInterfaces
 
     Write-Output "  Detecting new features"
