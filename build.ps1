@@ -5,8 +5,8 @@ Param (
 )
 
 function Initialize-ModuleBuildRequirements {
-    . (Resolve-Path -Path "$PSScriptRoot\Bootstrap-PackageManagement.ps1")
-    Bootstrap-PackageManagement
+    . (Resolve-Path -Path "$PSScriptRoot\Invoke-BootstrapPackageManagement.ps1")
+    Invoke-BootstrapPackageManagement
 
     Write-Output "Install/Import Build-Dependent Modules"
     $PSDependVersion = '0.2.3'

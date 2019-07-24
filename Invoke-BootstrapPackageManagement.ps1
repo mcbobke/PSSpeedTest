@@ -1,4 +1,4 @@
-function Bootstrap-PackageManagement {
+function Invoke-BootstrapPackageManagement {
     [CmdletBinding()]
     Param()
     

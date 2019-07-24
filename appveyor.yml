@@ -25,5 +25,8 @@ test_script:
 deploy_script:
   - ps: '& .\build.ps1 -Task Deploy'
 
+after_build:
+  - ps: 7z a build.zip output
+
 on_finish:
-  - ps: 7z a build.zip output; Get-ChildItem -Filter 'output.zip' | % { Push-AppveyorArtifact $_.FullName }
+  - ps: Get-ChildItem -Filter 'output.zip' | % { Push-AppveyorArtifact $_.FullName }
