@@ -5,6 +5,7 @@ Param(
 Task Default Build, Test, Distribute
 Task Build CopyOutput, GetReleasedModuleInfo, BuildPSM1, BuildPSD1
 
+#region ReadPreviousRelease
 function ReadPreviousRelease {
     Param (
         [Parameter(Mandatory)]
@@ -43,9 +44,9 @@ function ReadPreviousRelease {
     }
 
     $parameters = @{
-        Name = $Name;
+        Name       = $Name;
         Repository = $Repository;
-        Path = $Path;
+        Path       = $Path;
     }
 
     # Runspace is used to avoid importing old versions of the module in the current session
@@ -54,7 +55,9 @@ function ReadPreviousRelease {
 
     return $PowerShellRunspace.Invoke()
 }
+#endregion ReadPreviousRelease
 
+#region GetPublicFunctionInterfaces
 function GetPublicFunctionInterfaces {
     Param (
         [System.Management.Automation.FunctionInfo[]]
@@ -81,35 +84,35 @@ function GetPublicFunctionInterfaces {
 
     return $functionInterfaces
 }
+#endregion GetPublicFunctionInterfaces
 
+#region PublishTestResults
 function PublishTestResults {
     Param (
         [string]
         $Path
     )
 
-    if ($Env:BHBuildSystem -eq 'Unknown')
-    {
+    if ($Env:BHBuildSystem -eq 'Unknown') {
         Write-Warning "Build system unknown; skipping test results publishing."
         return
     }
 
     Write-Output "Publishing test results data file..."
-    switch ($Env:BHBuildSystem)
-    {
-        'AppVeyor'
-        { 
+    switch ($Env:BHBuildSystem) {
+        'AppVeyor' { 
             (New-Object 'System.Net.WebClient').UploadFile(
                 "https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)",
                 $Path)
         }
-        Default
-        {
+        Default {
             Write-Warning "Publish test result not implemented for build system '$($Env:BHBuildSystem)'."
         }
     }
 }
+#endregion PublishTestResults
 
+#region Enter-Build
 Enter-Build {
     $Script:publishToRepo = 'PSGallery'
     if (!(Get-Item 'Env:\BH*')) {
@@ -125,13 +128,17 @@ Enter-Build {
     $Script:ManifestPath = Join-Path -Path $Script:Destination -ChildPath "$Script:ModuleName.psd1"
     $Script:Imports = ('public', 'private')
     $Script:TestFile = "$PSScriptRoot\output\TestResults_PS$PSVersion.xml"
-    $Global:TestThisModule = $Script:ManifestPath
+    $Script:TestThisModule = $Script:ManifestPath
 }
+#endregion Enter-Build
 
+#region Clean
 Task Clean {
     Remove-Item -Path $Output -Recurse -ErrorAction Ignore | Out-Null
 }
+#endregion Clean
 
+#region CopyOutput
 Task CopyOutput {
     Write-Output "  Creating directory [$Script:Destination]"
     New-Item -Type Directory -Path $Script:Destination -ErrorAction Ignore | Out-Null
@@ -147,7 +154,9 @@ Task CopyOutput {
         Copy-Item -Destination $Script:Destination -Recurse -Force -PassThru | `
         ForEach-Object {"   Creating directory (recursive) [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
 }
+#endregion CopyOutput
 
+#region GetReleasedModuleInfo
 Task GetReleasedModuleInfo {
     $downloadPath = "$Script:Output\releasedModule"
     if (!(Test-Path $downloadPath)) {
@@ -165,30 +174,29 @@ Task GetReleasedModuleInfo {
 
     if ($releasedModule -eq $null) {
         $moduleInfo = [PSCustomObject] @{
-            Version = [Version]::New(0, 0, 1)
+            Version            = [Version]::New(0, 0, 1)
             FunctionInterfaces = New-Object -TypeName System.Collections.ArrayList
         }
     }
     else {
         $moduleInfo = [PSCustomObject] @{
-            Version = $releasedModule.Version
+            Version            = $releasedModule.Version
             FunctionInterfaces = GetPublicFunctionInterfaces -FunctionList $releasedModule.ExportedFunctions.Values
         }
     }
 
     $moduleInfo | Export-Clixml -Path "$Script:Output\released-module-info.xml"
 }
+#endregion GetReleasedModuleInfo
 
+#region BuildPSM1
 Task BuildPSM1 {
     [System.Text.StringBuilder]$StringBuilder = [System.Text.StringBuilder]::new()
-    foreach ($folder in $Script:Imports)
-    {
+    foreach ($folder in $Script:Imports) {
         [void]$StringBuilder.AppendLine("Write-Verbose `"Importing from [`$PSScriptRoot\$folder]`"")
-        if (Test-Path "$Script:Source\$folder")
-        {
+        if (Test-Path "$Script:Source\$folder") {
             $fileList = Get-ChildItem "$Script:Source\$folder" -Filter '*.ps1'
-            foreach ($file in $fileList)
-            {
+            foreach ($file in $fileList) {
                 $importName = "$folder\$($file.Name)"
                 Write-Output "  Found $importName"
                 [void]$StringBuilder.AppendLine( ". `"`$PSScriptRoot\$importName`"")
@@ -202,7 +210,9 @@ Task BuildPSM1 {
     Write-Output "  Creating module [$Script:ModulePath]"
     Set-Content -Path $Script:ModulePath -Value $stringbuilder.ToString() 
 }
+#endregion BuildPSM1
 
+#region BuildPSD1
 Task BuildPSD1 {
     Write-Output "  Updating [$Script:ManifestPath]"
     Copy-Item "$Script:Source\$ModuleName.psd1" -Destination $Script:ManifestPath
@@ -259,18 +269,20 @@ Task BuildPSD1 {
         Write-Output "  Using version from $Script:ModuleName.psd1: $version"
     }
 }
+#endregion BuildPSD1
 
+#region Test
 Task Test {
     Get-Module -All -Name $Script:ModuleName | Remove-Module -Force -ErrorAction 'Ignore'
-    Import-Module -Name $Global:TestThisModule
+    Import-Module -Name $Script:TestThisModule
     $origConfirmPreference = $Global:ConfirmPreference
     $Global:ConfirmPreference = 'None'
 
     $pesterParams = @{
-        PassThru = $true;
-        Strict = $true;
+        PassThru     = $true;
+        Strict       = $true;
         OutputFormat = 'NUnitXml';
-        OutputFile = $Script:TestFile;
+        OutputFile   = $Script:TestFile;
     }
     $testResults = Invoke-Pester @pesterParams
 
@@ -278,7 +290,9 @@ Task Test {
     PublishTestResults -Path $Script:TestFile
     assert ($testResults.FailedCount -eq 0) "There was [$($testResults.FailedCount)] failed test(s)."
 }
+#endregion Test
 
+#region Distribute
 Task Distribute {
     if (
         $Env:BHBuildSystem -ne 'Unknown' -and
@@ -286,7 +300,7 @@ Task Distribute {
         $Env:BHCommitMessage -match '!deploy'
     ) {
         $DeployParams = @{
-            Path = $BuildRoot;
+            Path  = $BuildRoot;
             Force = $true;
         }
 
@@ -299,3 +313,4 @@ Task Distribute {
         Write-Output "  Commit message (should include '!deploy'): $Env:BHCommitMessage"
     }
 }
+#endregion Distribute
