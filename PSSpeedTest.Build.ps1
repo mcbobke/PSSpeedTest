@@ -199,7 +199,7 @@ Task BuildPSM1 {
                 $importName = "$folder\$($file.Name)"
                 Write-Output "  Found $importName"
                 
-                $filePath = Resolve-Path -Path "$PSScriptRoot\$importName" -ErrorAction 'Ignore'
+                $filePath = Resolve-Path -Path "$Script:Source\$importName" -ErrorAction 'Ignore'
                 if ($filePath) {
                     $functionFileEndBlock = [System.Management.Automation.Language.Parser]::ParseFile($filePath, [ref]$null, [ref]$null) |
                         Select-Object -ExpandProperty 'EndBlock'
@@ -213,7 +213,7 @@ Task BuildPSM1 {
     }
     
     Write-Output "  Creating module [$Script:ModulePath]"
-    Set-Content -Path $Script:ModulePath -Value $StringBuilder.ToString() 
+    Set-Content -Path $Script:ModulePath -Value $StringBuilder.ToString()
 }
 #endregion BuildPSM1
 
