@@ -71,13 +71,13 @@ function Get-PublicFunctionInterfaces {
             Write-Verbose "$($function.Name)"
             Write-Verbose "$($function.Parameters[$parameter].Name)"
             $toAdd = "{0}:{1}" -f $function.Name, $function.Parameters[$parameter].Name
-            $functionInterfaces.Add($toAdd)
+            $null = $functionInterfaces.Add($toAdd)
             
             foreach ($alias in $function.Parameters[$parameter].Aliases) {
                 Write-Verbose "$($function.Name)"
                 Write-Verbose "$($alias)"
                 $toAdd = "{0}:{1}" -f $function.Name, $alias
-                $functionInterfaces.Add($toAdd)
+                $null = $functionInterfaces.Add($toAdd)
             }
         }
     }

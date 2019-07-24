@@ -26,4 +26,4 @@ deploy_script:
   - ps: '& .\build.ps1 -Task Deploy'
 
 on_finish:
-  - ps: 7z a build.zip output; Get-ChildItem -Path '.\output' -Recurse | % { Push-AppveyorArtifact $_.FullName }
+  - ps: 7z a build.zip output; Get-ChildItem -Filter 'output.zip' | % { Push-AppveyorArtifact $_.FullName }
