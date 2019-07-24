@@ -17,7 +17,7 @@ cache:
 build: off
 
 test_script:
-  - ps: & .\build.ps1
+  - ps: '& .\build.ps1'
 
 artifacts:
   - path: output
