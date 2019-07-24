@@ -16,8 +16,14 @@ cache:
 
 build: off
 
+build_script:
+  - ps: '& .\build.ps1 -Task Build'
+
 test_script:
-  - ps: '& .\build.ps1'
+  - ps: '& .\build.ps1 -Task Test'
+
+deploy_script:
+  - ps: '& .\build.ps1 -Task Deploy'
 
 artifacts:
   - path: output

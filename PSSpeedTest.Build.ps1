@@ -2,7 +2,7 @@ Param(
     $VersionIncrement = 'Patch'
 )
 
-Task Default Build, Test, Distribute
+Task Default Build, Test
 Task Build CopyOutput, GetReleasedModuleInfo, BuildPSM1, BuildPSD1
 
 #region Read-PreviousRelease
@@ -86,8 +86,8 @@ function Get-PublicFunctionInterfaces {
 }
 #endregion Get-PublicFunctionInterfaces
 
-#region PublishTestResults
-function PublishTestResults {
+#region Publish-TestResults
+function Publish-TestResults {
     Param (
         [string]
         $Path
@@ -110,7 +110,7 @@ function PublishTestResults {
         }
     }
 }
-#endregion PublishTestResults
+#endregion Publish-TestResults
 
 #region Enter-Build
 Enter-Build {
@@ -292,13 +292,13 @@ Task Test {
     $testResults = Invoke-Pester @pesterParams
 
     $Global:ConfirmPreference = $origConfirmPreference
-    PublishTestResults -Path $Script:TestFile
+    Publish-TestResults -Path $Script:TestFile
     assert ($testResults.FailedCount -eq 0) "There was [$($testResults.FailedCount)] failed test(s)."
 }
 #endregion Test
 
-#region Distribute
-Task Distribute {
+#region Deploy
+Task Deploy {
     if (
         $Env:BHBuildSystem -ne 'Unknown' -and
         $Env:BHBranchName -eq 'Master' -and
@@ -318,4 +318,4 @@ Task Distribute {
         Write-Output "  Commit message (should include '!deploy'): $Env:BHCommitMessage"
     }
 }
-#endregion Distribute
+#endregion Deploy
