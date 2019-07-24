@@ -206,14 +206,14 @@ Task BuildPSM1 {
                     
                     $functionContents = $functionFileEndBlock.ToString()
 
-                    $StringBuilder.AppendLine($functionContents)
+                    $null = $StringBuilder.AppendLine($functionContents)
                 }
             }
         }
     }
     
     Write-Output "  Creating module [$Script:ModulePath]"
-    Set-Content -Path $Script:ModulePath -Value $stringbuilder.ToString() 
+    Set-Content -Path $Script:ModulePath -Value $StringBuilder.ToString() 
 }
 #endregion BuildPSM1
 
