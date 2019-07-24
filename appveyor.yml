@@ -25,5 +25,5 @@ test_script:
 deploy_script:
   - ps: '& .\build.ps1 -Task Deploy'
 
-artifacts:
-  - path: output
+on_finish:
+  - ps: Get-ChildItem -Path '.\output' -Recurse | % { Push-AppveyorArtifact $_.FullName }
