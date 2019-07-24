@@ -67,7 +67,7 @@ function Set-SpeedTestConfig {
     try {
         Write-Verbose -Message "Trying Get-SpeedTestConfig before Set-SpeedTestConfig."
         $config = Get-Content -Path "$($PSScriptRoot | Split-Path -Parent)\config.json" -ErrorAction "Stop" |
-                    ConvertFrom-Json
+            ConvertFrom-Json
         Write-Verbose -Message "Stored config.json found."
     }
     catch {
@@ -89,13 +89,13 @@ function Set-SpeedTestConfig {
 
     # Detailed parameter validation against current configuration
     if ($InternetPort `
-        -and (!($InternetServer)) `
-        -and (!($config.defaultInternetServer.defaultServer))) {
+            -and (!($InternetServer)) `
+            -and (!($config.defaultInternetServer.defaultServer))) {
         throw "Cannot set an Internet port with an empty InternetServer setting."
-        }
+    }
     if ($LocalPort `
-        -and (!($LocalServer)) `
-        -and (!($config.defaultLocalServer.defaultServer))) {
+            -and (!($LocalServer)) `
+            -and (!($config.defaultLocalServer.defaultServer))) {
         throw "Cannot set a Local port with an empty LocalServer setting."
     }
 
