@@ -229,7 +229,7 @@ Task BuildPSD1 {
 
     $releasedModuleInfo = Import-Clixml -Path "$Script:Output\released-module-info.xml"
     Get-Module -Name $Script:ModuleName -All | Remove-Module -Force -ErrorAction 'Ignore'
-    $newFunctionList = (Import-Module -Name "$Script:ModulePath" -PassThru).ExportedFunctions.Values
+    $newFunctionList = (Import-Module -Name $Script:ManifestPath -PassThru).ExportedFunctions.Values
     Get-Module -Name $Script:ModuleName -All | Remove-Module -Force -ErrorAction 'Ignore'
     $newFunctionInterfaces = Get-PublicFunctionInterfaces -FunctionList $newFunctionList
     $oldFunctionInterfaces = $releasedModuleInfo.FunctionInterfaces
