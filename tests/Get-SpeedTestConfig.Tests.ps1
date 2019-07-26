@@ -19,8 +19,7 @@ Describe "Get-SpeedTestConfig (Public)" {
                 {Get-SpeedTestConfig} | Should -Throw
             }
             finally {
-                Rename-Item -Path "$Script:ModuleRoot\configrename.json" `
-                    -NewName "config.json" -Force
+                Rename-Item -Path "$Script:ModuleRoot\configrename.json" -NewName "config.json" -Force
             }
         }
     }

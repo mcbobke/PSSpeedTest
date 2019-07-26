@@ -6,8 +6,7 @@ InModuleScope PSSpeedTest {
                 Set-iPerf3Task -Port "5201"
                 Remove-iPerf3Task
 
-                $result = Get-ScheduledTask -TaskName "iPerf3 Server" `
-                    -ErrorAction "SilentlyContinue"
+                $result = Get-ScheduledTask -TaskName "iPerf3 Server" -ErrorAction "SilentlyContinue"
                 $result | Should -BeNullOrEmpty
             }
         }

@@ -1,22 +1,22 @@
-<#
-    .SYNOPSIS
-    Installs the ChocolateyGet package provider/source on this computer.
-
-    .DESCRIPTION
-    Installs the ChocolateyGet package provider/source on this computer forcefully.
-
-    .PARAMETER PassThru
-    Returns the object returned by "Get-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue'".
-
-    .EXAMPLE
-    Install-ChocolateyGetProvider
-
-    .EXAMPLE
-    Install-ChocolateyGetProvider -PassThru
-#>
-
 function Install-ChocolateyGetProvider {
-    [CmdletBinding(SupportsShouldProcess=$True,ConfirmImpact="Medium")]
+    <#
+        .SYNOPSIS
+        Installs the ChocolateyGet package provider/source on this computer.
+
+        .DESCRIPTION
+        Installs the ChocolateyGet package provider/source on this computer forcefully.
+
+        .PARAMETER PassThru
+        Returns the object returned by "Get-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue'".
+
+        .EXAMPLE
+        Install-ChocolateyGetProvider
+
+        .EXAMPLE
+        Install-ChocolateyGetProvider -PassThru
+    #>
+    
+    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "Medium")]
     Param (
         [Switch]
         $PassThru
@@ -28,18 +28,17 @@ function Install-ChocolateyGetProvider {
         Write-Verbose -Message 'Chocolatey package provider/source already installed.'
         if ($PassThru) {
             return $toReturn
-        }
-        else {
+        } else {
             return
         }
     }
 
     $PackageProviderParams = @{
-        Name = 'ChocolateyGet';
-        Scope = 'CurrentUser';
-        Force = $true;
+        Name        = 'ChocolateyGet';
+        Scope       = 'CurrentUser';
+        Force       = $true;
         ErrorAction = 'SilentlyContinue';
-        Confirm = $false;
+        Confirm     = $false;
     }
 
     Write-Verbose -Message 'Installing ChocolateyGet PackageProvider as it was not found.'
@@ -50,8 +49,7 @@ function Install-ChocolateyGetProvider {
     $toReturn = Get-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue'
     if ($toReturn) {
         Write-Verbose -Message 'Chocolatey package provider/source successfully installed.'
-    }
-    else {
+    } else {
         throw "ChocolateyGet failed to install or was not installed. Message: {0}" -f $error[0].Exception.message
     }
 

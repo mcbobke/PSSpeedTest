@@ -1,17 +1,17 @@
-<#
-    .SYNOPSIS
-    Removes iPerf3 server configuration from the local computer.
-
-    .DESCRIPTION
-    Removes iPerf3 server configuration from the local computer.
-    This includes the iPerf3 package, firewall rules, and scheduled task.
-
-    .EXAMPLE
-    Remove-SpeedTestServer
-    Decommissions the local iPerf3 server.
-#>
-
 function Remove-SpeedTestServer {
+    <#
+        .SYNOPSIS
+        Removes iPerf3 server configuration from the local computer.
+
+        .DESCRIPTION
+        Removes iPerf3 server configuration from the local computer.
+        This includes the iPerf3 package, firewall rules, and scheduled task.
+
+        .EXAMPLE
+        Remove-SpeedTestServer
+        Decommissions the local iPerf3 server.
+    #>
+
     [CmdletBinding()]
     Param ()
 
@@ -29,8 +29,7 @@ function Remove-SpeedTestServer {
     Write-Verbose -Message "Stopping iPerf3 process."
     try {
         Get-Process -Name 'iperf3' | Stop-Process
-    }
-    catch {
+    } catch {
         Write-Verbose -Message "iPerf3 process not found - no action taken."
     }
 
@@ -45,8 +44,7 @@ function Remove-SpeedTestServer {
             Write-Verbose -Message "iPerf3 process does not exist."
             $processTest = $true
             break
-        }
-        else {
+        } else {
             Start-Sleep -Seconds 3
         }
     }

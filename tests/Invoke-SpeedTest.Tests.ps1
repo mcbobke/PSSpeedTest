@@ -34,24 +34,6 @@ Describe "Invoke-SpeedTest (Public)" {
         It "Should successfully run a speed test against a valid public iPerf3 server using specified Server parameter and default port '5201'" {
             {Invoke-SpeedTest -Server "iperf.he.net"} | Should -Not -Throw
         }
-
-        It "Should throw an error when running a speed test against an invalid public iPerf3 server with a saved configuration" {
-            Set-SpeedTestConfig -InternetServer "test.local.com"
-            {Invoke-SpeedTest -Internet} | Should -Throw
-        }
-
-        It "Should throw an error when running a speed test against a valid public iPerf3 server with a saved configuration using an invalid port" {
-            Set-SpeedTestConfig -InternetServer "test.local.com" -InternetPort "7777"
-            {Invoke-SpeedTest -Internet} | Should -Throw
-        }
-
-        It "Should throw an error when running a speed test against an invalid public iPerf3 server/port using specified Server/Port parameters" {
-            {Invoke-SpeedTest -Server "test.local.com" -Port "7777"} | Should -Throw
-        }
-
-        It "Should throw an error when running a speed test against an invalid public iPerf3 server using specified Server parameter" {
-            {Invoke-SpeedTest -Server "test.local.com"} | Should -Throw
-        }
     }
 
     Context "Invoke-SpeedTest (Mocked for testing parameters)" {

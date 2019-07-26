@@ -6,9 +6,7 @@ InModuleScope PSSpeedTest {
                 Get-Process -Name 'iperf3' | Stop-Process -Force # Stopping process to prevent file lock
                 Remove-iPerf3
 
-                $result = Get-Package -Name 'iperf3' `
-                            -ProviderName 'ChocolateyGet' `
-                            -ErrorAction 'SilentlyContinue'
+                $result = Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue'
                 $result | Should -BeNullOrEmpty
             }
         }
