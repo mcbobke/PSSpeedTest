@@ -70,7 +70,7 @@ function Invoke-SpeedTest {
     Install-ChocolateyGetProvider
     Install-iPerf3
 
-    $config = Get-Content -Path "$($PSScriptRoot | Split-Path -Parent)\config.json" -ErrorAction "Stop" | ConvertFrom-Json
+    $config = Get-SpeedTestConfig -ErrorAction 'SilentlyContinue'
     $command = "iperf3.exe "
     $usedServer = ""
     $usedPort = ""
