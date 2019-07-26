@@ -145,13 +145,13 @@ Task CopyOutput {
 
     Write-Output "  Files and directories to be copied from source [$Script:Source]"
 
-    Get-ChildItem -Path $Script:Source -File | `
-        Where-Object -Property Name -NotMatch "$Script:ModuleName\.ps[md]1" | `
-        Copy-Item -Destination $Script:Destination -Force -PassThru | `
+    Get-ChildItem -Path $Script:Source -File |
+        Where-Object -Property Name -NotMatch "$Script:ModuleName\.ps[md]1" |
+        Copy-Item -Destination $Script:Destination -Force -PassThru |
         ForEach-Object {"   Creating file [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
 
-    Get-ChildItem -Path $Script:Source -Directory | `
-        Copy-Item -Destination $Script:Destination -Recurse -Force -PassThru | `
+    Get-ChildItem -Path $Script:Source -Directory |
+        Copy-Item -Destination $Script:Destination -Recurse -Force -PassThru |
         ForEach-Object {"   Creating directory (recursive) [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
 }
 #endregion CopyOutput
@@ -222,7 +222,7 @@ Task BuildPSD1 {
     Write-Output "  Updating [$Script:ManifestPath]"
     Copy-Item "$Script:Source\$ModuleName.psd1" -Destination $Script:ManifestPath
 
-    $moduleFunctions = Get-ChildItem -Path "$Script:Source\public" -Filter '*.ps1' | `
+    $moduleFunctions = Get-ChildItem -Path "$Script:Source\public" -Filter '*.ps1' |
         Select-Object -ExpandProperty BaseName
     Set-ModuleFunctions -Name $Script:ManifestPath -FunctionsToExport $moduleFunctions
     Set-ModuleAliases -Name $Script:ManifestPath

@@ -1,25 +1,25 @@
-<#
-    .SYNOPSIS
-    Configures the iPerf3 server scheduled task that will listen on the given port.
-
-    .DESCRIPTION
-    Configures the iPerf3 server scheduled task that will listen on the given port.
-    Sets the scheduled task to run on startup.
-
-    .PARAMETER Port
-    The port that iPerf3 will listen on.
-
-    .PARAMETER PassThru
-    Returns the object returned by "Get-ScheduledTask -TaskName 'iPerf3 Server' -ErrorAction 'SilentlyContinue'".
-
-    .EXAMPLE
-    Set-iPerf3Task -Port "5201"
-#>
-
 function Set-iPerf3Task {
-    [CmdletBinding(SupportsShouldProcess=$True,ConfirmImpact="Medium")]
+    <#
+        .SYNOPSIS
+        Configures the iPerf3 server scheduled task that will listen on the given port.
+
+        .DESCRIPTION
+        Configures the iPerf3 server scheduled task that will listen on the given port.
+        Sets the scheduled task to run on startup.
+
+        .PARAMETER Port
+        The port that iPerf3 will listen on.
+
+        .PARAMETER PassThru
+        Returns the object returned by "Get-ScheduledTask -TaskName 'iPerf3 Server' -ErrorAction 'SilentlyContinue'".
+
+        .EXAMPLE
+        Set-iPerf3Task -Port "5201"
+    #>
+    
+    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "Medium")]
     Param(
-        [Parameter(Mandatory=$true,Position=0)]
+        [Parameter(Mandatory = $true, Position = 0)]
         [ValidateNotNullOrEmpty()]
         [String]
         $Port,
@@ -29,7 +29,7 @@ function Set-iPerf3Task {
 
     Write-Verbose -Message "Gathering scheduled task settings."
     $actionParams = @{
-        Execute = (Get-Command -Name 'iperf3.exe' | Select-Object -ExpandProperty 'Source');
+        Execute  = (Get-Command -Name 'iperf3.exe' | Select-Object -ExpandProperty 'Source');
         Argument = "-s -D -p $Port";
     }
 
@@ -39,11 +39,11 @@ function Set-iPerf3Task {
     $taskSettings = New-ScheduledTaskSettingsSet
     
     $taskParams = @{
-        Action = $taskAction;
+        Action      = $taskAction;
         Description = 'iPerf3 Speed Test Server';
-        Principal = $taskPrincipal;
-        Settings = $taskSettings;
-        Trigger = $taskTrigger;
+        Principal   = $taskPrincipal;
+        Settings    = $taskSettings;
+        Trigger     = $taskTrigger;
         ErrorAction = 'SilentlyContinue';
     }
 
@@ -58,8 +58,7 @@ function Set-iPerf3Task {
     if ($toReturn) {
         Start-ScheduledTask -TaskName 'iPerf3 Server'
         Write-Verbose -Message 'Scheduled task for iPerf3 server registered and started.'
-    }
-    else {
+    } else {
         throw "Scheduled task for iPerf3 server was not registered. Message: {0}" -f $error[0].Exception.message
     }
 

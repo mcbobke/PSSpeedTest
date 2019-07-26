@@ -31,8 +31,7 @@ Describe "Set-SpeedTestConfig (Public)" {
         }
 
         It "Should save valid config if all parameters are used" {
-            Set-SpeedTestConfig -InternetServer "test.public.com" -InternetPort "7777" `
-                    -LocalServer "test.local.com" -LocalPort "7777"
+            Set-SpeedTestConfig -InternetServer "test.public.com" -InternetPort "7777" -LocalServer "test.local.com" -LocalPort "7777"
             $config = Get-SpeedTestConfig
             $config.DefaultInternetServer | Should -Be "test.public.com"
             $config.DefaultInternetPort | Should -Be "7777"

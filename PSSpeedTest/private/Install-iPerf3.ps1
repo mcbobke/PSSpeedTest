@@ -1,22 +1,22 @@
-<#
-    .SYNOPSIS
-    Installs the latest version of iPerf3 on this computer.
-
-    .DESCRIPTION
-    Installs the latest version of iPerf3 on this computer from the ChocolateyGet package source.
-
-    .PARAMETER PassThru
-    Returns the object returned by "Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue'".
-
-    .EXAMPLE
-    Install-iPerf3
-
-    .EXAMPLE
-    Install-iPerf3 -PassThru
-#>
-
 function Install-iPerf3 {
-    [CmdletBinding(SupportsShouldProcess=$True,ConfirmImpact="Medium")]
+    <#
+        .SYNOPSIS
+        Installs the latest version of iPerf3 on this computer.
+
+        .DESCRIPTION
+        Installs the latest version of iPerf3 on this computer from the ChocolateyGet package source.
+
+        .PARAMETER PassThru
+        Returns the object returned by "Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue'".
+
+        .EXAMPLE
+        Install-iPerf3
+
+        .EXAMPLE
+        Install-iPerf3 -PassThru
+    #>
+    
+    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "Medium")]
     Param (
         [Switch]
         $PassThru
@@ -31,19 +31,16 @@ function Install-iPerf3 {
             Write-Verbose -Message 'iPerf3 package already installed.'
             if ($PassThru) {
                 return $toReturn
-            }
-            else {
+            } else {
                 return
             }
         }
-    }
-    catch {
+    } catch {
         if (!(Get-PackageProvider -ListAvailable -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue')) {
             Write-Verbose -Message 'ChocolateyGet package provider not found; installing.'
             try {
                 Install-ChocolateyGetProvider
-            }
-            catch {
+            } catch {
                 $PSCmdlet.ThrowTerminatingError($_)
             }
         }
@@ -53,11 +50,11 @@ function Install-iPerf3 {
     Import-PackageProvider -Name 'ChocolateyGet'
 
     $PackageParams = @{
-        Name = 'iperf3';
+        Name         = 'iperf3';
         ProviderName = 'ChocolateyGet';
-        Force = $true;
-        ErrorAction = 'SilentlyContinue';
-        Confirm = $false;
+        Force        = $true;
+        ErrorAction  = 'SilentlyContinue';
+        Confirm      = $false;
     }
     if ($PSCmdlet.ShouldProcess($PackageParams['Name'], "Install-Package")) {
         Install-Package @PackageParams | Out-Null
@@ -66,8 +63,7 @@ function Install-iPerf3 {
     $toReturn = Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue'
     if ($toReturn) {
         Write-Verbose -Message 'iPerf3 package installed.'
-    }
-    else {
+    } else {
         throw "iPerf3 failed to install or was not installed. Message: {0}" -f $error[0].Exception.message
     }
 
