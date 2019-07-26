@@ -1,30 +1,30 @@
-<#
-    .SYNOPSIS
-    Configures the local computer as an iPerf3 server.
-
-    .DESCRIPTION
-    Configures iPerf3 as a constantly-listening service on the local computer.
-    
-    .PARAMETER Port
-    The port number that the iPerf3 server will listen on.
-    If not specified, the default port '5201' will be used.
-
-    .PARAMETER PassThru
-    Returns the object returned by "Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'".
-
-    .EXAMPLE
-    Install-SpeedTestServer
-    Sets up the local computer as an iPerf3 server listening on default iPerf port 5201.
-
-    .EXAMPLE
-    Install-SpeedTestServer -Port 5555
-    Sets up the local computer as an iPerf3 server listening on port 5555.
-
-    .EXAMPLE
-    Install-SpeedTestServer -Port 5555 -PassThru
-#>
-
 function Install-SpeedTestServer {
+    <#
+        .SYNOPSIS
+        Configures the local computer as an iPerf3 server.
+
+        .DESCRIPTION
+        Configures iPerf3 as a constantly-listening service on the local computer.
+        
+        .PARAMETER Port
+        The port number that the iPerf3 server will listen on.
+        If not specified, the default port '5201' will be used.
+
+        .PARAMETER PassThru
+        Returns the object returned by "Get-Process -Name 'iperf3' -ErrorAction 'SilentlyContinue'".
+
+        .EXAMPLE
+        Install-SpeedTestServer
+        Sets up the local computer as an iPerf3 server listening on default iPerf port 5201.
+
+        .EXAMPLE
+        Install-SpeedTestServer -Port 5555
+        Sets up the local computer as an iPerf3 server listening on port 5555.
+
+        .EXAMPLE
+        Install-SpeedTestServer -Port 5555 -PassThru
+    #>
+
     [CmdletBinding()]
     Param (
         [ValidateNotNullOrEmpty()]
@@ -54,8 +54,7 @@ function Install-SpeedTestServer {
             Write-Verbose -Message "iPerf3 Server started on port $Port."
             $processTest = $true
             break
-        }
-        else {
+        } else {
             Start-Sleep -Seconds 3
         }
     }

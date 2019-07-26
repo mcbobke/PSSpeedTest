@@ -1,15 +1,15 @@
-<#
-    .SYNOPSIS
-    Get the default server configurations for Internet and Local speed test servers.
-
-    .DESCRIPTION
-    Get the default server configurations for Internet and Local speed test servers.
-
-    .EXAMPLE
-    Get-SpeedTestConfig
-#>
-
 function Get-SpeedTestConfig {
+    <#
+        .SYNOPSIS
+        Get the default server configurations for Internet and Local speed test servers.
+
+        .DESCRIPTION
+        Get the default server configurations for Internet and Local speed test servers.
+
+        .EXAMPLE
+        Get-SpeedTestConfig
+    #>
+
     [CmdletBinding()]
     Param()
 
@@ -19,14 +19,13 @@ function Get-SpeedTestConfig {
 
         $config = [PSCustomObject] @{
             DefaultInternetServer = $config.defaultInternetServer.defaultServer;
-            DefaultInternetPort = $config.defaultInternetServer.defaultPort;
-            DefaultLocalServer = $config.defaultLocalServer.defaultServer;
-            DefaultLocalPort = $config.defaultLocalServer.defaultPort;
+            DefaultInternetPort   = $config.defaultInternetServer.defaultPort;
+            DefaultLocalServer    = $config.defaultLocalServer.defaultServer;
+            DefaultLocalPort      = $config.defaultLocalServer.defaultPort;
         }
 
         return $config
-    }
-    catch {
+    } catch {
         throw "Can't find the JSON configuration file. Use 'Set-SpeedTestConfig' to create one."
     }
 }
