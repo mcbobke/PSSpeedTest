@@ -107,5 +107,5 @@ function Set-SpeedTestConfig {
     Write-Verbose -Message "Setting config.json."
     $config `
         | ConvertTo-Json `
-        | Set-Content -Path "$($PSScriptRoot | Split-Path -Parent)\config.json"
+        | Set-Content -Path "$PSScriptRoot\config.json"
 }
