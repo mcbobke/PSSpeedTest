@@ -138,14 +138,9 @@ function Invoke-SpeedTest {
     $resultsPS = $resultsJSON | ConvertFrom-Json
 
     if ($resultsPS.error) {
-        if ($resultsPS.error -match 'unable to connect to server'){
-            throw "Catastrophic error occurred: $($resultsPS.error)"
-        }
-        else {
-            Write-Warning -Message "Problem occurred: $($resultsPS.error)"
-            $megabitsPerSecSent = 0
-            $megabitsPerSecReceived = 0
-        }
+        Write-Warning -Message "Problem occurred: $($resultsPS.error)"
+        $megabitsPerSecSent = 0
+        $megabitsPerSecReceived = 0
     }
     else {
         Write-Verbose -Message "Speed test successful; calculating mbps and returning PSCustomObject."
