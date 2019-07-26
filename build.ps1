@@ -26,13 +26,11 @@ switch ($Task) {
     }
     'Test' {
         Write-Output "Running Pester tests for PSSpeedTest"
-        Initialize-ModuleBuildRequirements
         Invoke-Build -Task $Task -Result InvokeBuildResult
         break
     }
     'Deploy' {
         Write-Output "Deploying PSSpeedTest"
-        Initialize-ModuleBuildRequirements
         Invoke-Build -Task $Task -Result InvokeBuildResult
         break
     }

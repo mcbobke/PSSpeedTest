@@ -15,7 +15,7 @@ function Get-SpeedTestConfig {
 
     try {
         Write-Verbose -Message "Getting content of config.json and returning as a PSCustomObject."
-        $config = Get-Content -Path "$($PSScriptRoot | Split-Path -Parent)\config.json" -ErrorAction "Stop" | ConvertFrom-Json
+        $config = Get-Content -Path "$PSScriptRoot\config.json" -ErrorAction "Stop" | ConvertFrom-Json
 
         $config = [PSCustomObject] @{
             DefaultInternetServer = $config.defaultInternetServer.defaultServer;

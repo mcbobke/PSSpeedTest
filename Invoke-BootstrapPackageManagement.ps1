@@ -22,9 +22,9 @@ function Invoke-BootstrapPackageManagement {
         throw
     }
 
-    Write-Verbose -Message 'Bootstrapping package management' -Verbose
+    Write-Output 'Bootstrapping package management'
 
     Start-Job -ScriptBlock $scriptBlock | Wait-Job | Receive-Job | Out-Null
 
-    Write-Verbose -Message 'Package management boostrapped' -Verbose
+    Write-Output 'Package management boostrapped'
 }
