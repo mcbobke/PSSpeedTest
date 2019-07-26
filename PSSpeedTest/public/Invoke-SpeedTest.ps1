@@ -78,14 +78,14 @@ function Invoke-SpeedTest {
     switch ($PSCmdlet.ParameterSetName) {
         "Internet" {
             Write-Verbose -Message "Defaulting to stored Internet speed test server settings."
-            if (!($config.defaultInternetServer.defaultServer)) {
+            if (!($config.DefaultInternetServer)) {
                 throw "No default Internet server configured - run Set-SpeedTestConfig."
             }
             else {
-                $usedServer = $config.defaultInternetServer.defaultServer
+                $usedServer = $config.DefaultInternetServer
                 $command = $command + "-c $usedServer "
-                if ($config.defaultInternetServer.defaultPort) {
-                    $usedPort = $config.defaultInternetServer.defaultPort
+                if ($config.DefaultInternetPort) {
+                    $usedPort = $config.DefaultInternetPort
                     $command = $command + "-p $usedPort "
                 }
                 else {
@@ -96,14 +96,14 @@ function Invoke-SpeedTest {
         }
         "Local" {
             Write-Verbose -Message "Defaulting to stored Local speed test server settings."
-            if (!($config.defaultLocalServer.defaultServer)) {
+            if (!($config.DefaultLocalServer)) {
                 throw "No default Local server configured - run Set-SpeedTestConfig."
             }
             else {
-                $usedServer = $config.defaultLocalServer.defaultServer
+                $usedServer = $config.DefaultLocalServer
                 $command = $command + "-c $usedServer "
-                if ($config.defaultLocalServer.defaultPort) {
-                    $usedPort = $config.defaultLocalServer.defaultPort
+                if ($config.DefaultLocalPort) {
+                    $usedPort = $config.DefaultLocalPort
                     $command = $command + "-p $usedPort "
                 }
                 else {
