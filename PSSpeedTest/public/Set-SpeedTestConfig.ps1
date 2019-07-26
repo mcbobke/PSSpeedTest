@@ -69,20 +69,19 @@ function Set-SpeedTestConfig {
         $config = Get-Content -Path "$PSScriptRoot\config.json" -ErrorAction "Stop" |
             ConvertFrom-Json
         Write-Verbose -Message "Stored config.json found."
-    }
-    catch {
+    } catch {
         Write-Verbose -Message "No configuration found - starting with empty configuration."
         $jsonString = @"
-    {   "defaultPort"       : "5201",
-        "defaultLocalServer": {
-            "defaultServer" : "",
-            "defaultPort"   : ""
-        },
-        "defaultInternetServer" : {
-            "defaultServer" : "",
-            "defaultPort"   : ""
-        }
+{   
+    "defaultLocalServer" : {
+        "defaultServer" : "",
+        "defaultPort"   : ""
+    },
+    "defaultInternetServer" : {
+        "defaultServer" : "",
+        "defaultPort"   : ""
     }
+}
 "@
         $config = $jsonString | ConvertFrom-Json
     }

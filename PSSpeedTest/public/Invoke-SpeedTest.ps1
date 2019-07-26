@@ -70,6 +70,7 @@ function Invoke-SpeedTest {
     Install-ChocolateyGetProvider
     Install-iPerf3
 
+    $defaultPort = '5201'
     $config = Get-SpeedTestConfig -ErrorAction 'SilentlyContinue'
     $command = "iperf3.exe "
     $usedServer = ""
@@ -89,10 +90,11 @@ function Invoke-SpeedTest {
                     $command = $command + "-p $usedPort "
                 }
                 else {
-                    $usedPort = $config.defaultPort
+                    $usedPort = $defaultPort
                     $command = $command + "-p $usedPort "
                 }
             }
+            break
         }
         "Local" {
             Write-Verbose -Message "Defaulting to stored Local speed test server settings."
@@ -107,10 +109,11 @@ function Invoke-SpeedTest {
                     $command = $command + "-p $usedPort "
                 }
                 else {
-                    $usedPort = $config.defaultPort
+                    $usedPort = $defaultPort
                     $command = $command + "-p $usedPort "
                 }
             }
+            break
         }
         "Specified" {
             Write-Verbose -Message "Server: $Server and port: $Port specified manually."
@@ -121,9 +124,10 @@ function Invoke-SpeedTest {
                 $command = $command + "-p $usedPort "
             }
             else {
-                $usedPort = $config.defaultPort
+                $usedPort = $defaultPort
                 $command = $command + "-p $usedPort "
             }
+            break
         }
         Default {
             Write-Error -Message "ParameterSet not identified."
