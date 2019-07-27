@@ -32,12 +32,10 @@ function Read-PreviousRelease {
         try {
             Save-Module -Name $Name -Path $Path -Repository $Repository -ErrorAction Stop
             Import-Module -Name "$Path\$Name" -PassThru -ErrorAction Stop
-        }
-        catch {
-            if ($_ -match "No match was found for the specified search criteria") {
+        } catch {
+            if ($_ -match 'No match was found for the specified search criteria') {
                 @()
-            }
-            else {
+            } else {
                 $_
             }
         }
@@ -94,11 +92,11 @@ function Publish-TestResults {
     )
 
     if ($Env:BHBuildSystem -eq 'Unknown') {
-        Write-Warning "Build system unknown; skipping test results publishing."
+        Write-Warning 'Build system unknown; skipping test results publishing.'
         return
     }
 
-    Write-Output "Publishing test results data file..."
+    Write-Output 'Publishing test results data file...'
     switch ($Env:BHBuildSystem) {
         'AppVeyor' { 
             (New-Object 'System.Net.WebClient').UploadFile(
@@ -148,11 +146,11 @@ Task CopyOutput {
     Get-ChildItem -Path $Script:Source -File |
         Where-Object -Property Name -NotMatch "$Script:ModuleName\.ps[md]1" |
         Copy-Item -Destination $Script:Destination -Force -PassThru |
-        ForEach-Object {"   Creating file [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
+        ForEach-Object {'   Creating file [{0}]' -f $_.fullname.replace($PSScriptRoot, '')}
 
     Get-ChildItem -Path $Script:Source -Directory |
         Copy-Item -Destination $Script:Destination -Recurse -Force -PassThru |
-        ForEach-Object {"   Creating directory (recursive) [{0}]" -f $_.fullname.replace($PSScriptRoot, '')}
+        ForEach-Object {'   Creating directory (recursive) [{0}]' -f $_.fullname.replace($PSScriptRoot, '')}
 }
 #endregion CopyOutput
 
@@ -177,8 +175,7 @@ Task GetReleasedModuleInfo {
             Version            = [Version]::New(0, 0, 1)
             FunctionInterfaces = New-Object -TypeName System.Collections.ArrayList
         }
-    }
-    else {
+    } else {
         $moduleInfo = [PSCustomObject] @{
             Version            = $releasedModule.Version
             FunctionInterfaces = Get-PublicFunctionInterfaces -FunctionList $releasedModule.ExportedFunctions.Values
@@ -234,14 +231,14 @@ Task BuildPSD1 {
     $newFunctionInterfaces = Get-PublicFunctionInterfaces -FunctionList $newFunctionList
     $oldFunctionInterfaces = $releasedModuleInfo.FunctionInterfaces
 
-    Write-Output "  Detecting new features"
+    Write-Output '  Detecting new features'
     foreach ($interface in $newFunctionInterfaces) {
         if ($interface -notin $oldFunctionInterfaces) {
             $VersionIncrement = 'Minor'
             Write-Output "      $interface"
         }
     }
-    Write-Output "  Detecting lost features (breaking changes)"
+    Write-Output '  Detecting lost features (breaking changes)'
     foreach ($interface in $oldFunctionInterfaces) {
         if ($interface -notin $newFunctionInterfaces) {
             $VersionIncrement = 'Major'
@@ -249,14 +246,13 @@ Task BuildPSD1 {
         }
     }
     
-    $version = [Version](Get-Metadata -Path $Script:ManifestPath -PropertyName "ModuleVersion")
+    $version = [Version](Get-Metadata -Path $Script:ManifestPath -PropertyName 'ModuleVersion')
 
     # Don't bump major version if in pre-release
-    if ($version -lt ([Version]"1.0.0")) {
+    if ($version -lt ([Version]'1.0.0')) {
         if ($VersionIncrement -eq 'Major') {
             $VersionIncrement = 'Minor'
-        }
-        else {
+        } else {
             $VersionIncrement = 'Patch'
         }
     }
@@ -269,8 +265,7 @@ Task BuildPSD1 {
         $version = [Version](Step-Version -Version $releasedVersion -By $VersionIncrement)
         Write-Output "  Stepping module from released version [$releasedVersion] to new version [$version] by [$VersionIncrement]"
         Update-Metadata -Path $Script:ManifestPath -PropertyName 'ModuleVersion' -Value $version
-    }
-    else {
+    } else {
         Write-Output "  Using version from $Script:ModuleName.psd1: $version"
     }
 }
@@ -310,9 +305,8 @@ Task Deploy {
         }
 
         Invoke-PSDeploy @DeployParams
-    }
-    else {
-        Write-Output "  Skipping deployment:"
+    } else {
+        Write-Output '  Skipping deployment:'
         Write-Output "  Build system: $Env:BHBuildSystem"
         Write-Output "  Current branch (should be master): $Env:BHBranchName"
         Write-Output "  Commit message (should include '!deploy'): $Env:BHCommitMessage"

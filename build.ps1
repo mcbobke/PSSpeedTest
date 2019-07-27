@@ -8,7 +8,7 @@ function Initialize-ModuleBuildRequirements {
     . (Resolve-Path -Path "$PSScriptRoot\Invoke-BootstrapPackageManagement.ps1")
     Invoke-BootstrapPackageManagement
 
-    Write-Output "Install/Import Build-Dependent Modules"
+    Write-Output 'Install/Import Build-Dependent Modules'
     $PSDependVersion = '0.2.3'
     if (!(Get-InstalledModule -Name 'PSDepend' -RequiredVersion $PSDependVersion -ErrorAction 'SilentlyContinue')) {
         Install-Module -Name 'PSDepend' -RequiredVersion $PSDependVersion -Force -Scope 'CurrentUser'
@@ -19,23 +19,23 @@ function Initialize-ModuleBuildRequirements {
 
 switch ($Task) {
     'Build' {
-        Write-Output "Starting build of PSSpeedTest"
+        Write-Output 'Starting build of PSSpeedTest'
         Initialize-ModuleBuildRequirements
         Invoke-Build -Task $Task -Result InvokeBuildResult -VersionIncrement $VersionIncrement
         break
     }
     'Test' {
-        Write-Output "Running Pester tests for PSSpeedTest"
+        Write-Output 'Running Pester tests for PSSpeedTest'
         Invoke-Build -Task $Task -Result InvokeBuildResult
         break
     }
     'Deploy' {
-        Write-Output "Deploying PSSpeedTest"
+        Write-Output 'Deploying PSSpeedTest'
         Invoke-Build -Task $Task -Result InvokeBuildResult
         break
     }
     'Default' {
-        Write-Output "Building and testing PSSpeedTest"
+        Write-Output 'Building and testing PSSpeedTest'
         Initialize-ModuleBuildRequirements
         Invoke-Build -Task $Task -Result InvokeBuildResult -VersionIncrement $VersionIncrement
         break
@@ -46,7 +46,7 @@ switch ($Task) {
 }
 
 if ($InvokeBuildResult.Errors) {
-    foreach($t in $Result.Tasks) {
+    foreach ($t in $Result.Tasks) {
         if ($t.Error) {
             "Task '$($t.Name)' at $($t.InvocationInfo.ScriptName):$($t.InvocationInfo.ScriptLineNumber)"
             $t.Error
@@ -54,7 +54,6 @@ if ($InvokeBuildResult.Errors) {
     }
 
     exit 1
-}
-else {
+} else {
     exit 0
 }

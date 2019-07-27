@@ -11,17 +11,19 @@ function Remove-iPerf3Port {
         Remove-iPerf3Port
     #>
 
-    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "Medium")]
+    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = 'Medium')]
     Param()
 
-    Write-Verbose -Message "Removing inbound and outbound iperf3 firewall rules."
+    Write-Verbose -Message 'Removing inbound and outbound iperf3 firewall rules.'
 
     try {
-        if ($PSCmdlet.ShouldProcess("iperf3 Inbound/Outbound Firewall Rules", "Remove-NetFirewallRule")) {
-            Get-NetFirewallRule -DisplayName "iPerf3 Server Inbound TCP Rule" | Remove-NetFirewallRule
-            Get-NetFirewallRule -DisplayName "iPerf3 Server Outbound TCP Rule" | Remove-NetFirewallRule
+        if ($PSCmdlet.ShouldProcess('iperf3 Inbound/Outbound Firewall Rules', 'Remove-NetFirewallRule')) {
+            Get-NetFirewallRule -DisplayName 'iPerf3 Server Inbound TCP Rule' |
+                Remove-NetFirewallRule
+            Get-NetFirewallRule -DisplayName 'iPerf3 Server Outbound TCP Rule' |
+                Remove-NetFirewallRule
         }
     } catch {
-        Write-Verbose -Message "Firewall rules not found - no action taken."
+        Write-Verbose -Message 'Firewall rules not found - no action taken.'
     }
 }

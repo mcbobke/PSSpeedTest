@@ -37,7 +37,7 @@ function Install-SpeedTestServer {
     $timeout = 30 # Seconds
 
     if (!(Test-Administrator)) {
-        throw "You are not running as administrator. Please re-run this function after opening PowerShell as administrator."
+        throw 'You are not running as administrator. Please re-run this function after opening PowerShell as administrator.'
     }
 
     Write-Verbose -Message "Setting up iPerf3 server on local machine on port $Port."

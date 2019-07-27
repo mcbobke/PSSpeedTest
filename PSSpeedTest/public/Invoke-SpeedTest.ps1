@@ -48,24 +48,24 @@ function Invoke-SpeedTest {
 
     [CmdletBinding()]
     Param (
-        [Parameter(ParameterSetName = "Internet")]
+        [Parameter(ParameterSetName = 'Internet')]
         [Switch]
         $Internet,
-        [Parameter(ParameterSetName = "Local")]
+        [Parameter(ParameterSetName = 'Local')]
         [Switch]
         $Local,
         [Parameter(Mandatory = $true,
-            ParameterSetName = "Specified")]
+            ParameterSetName = 'Specified')]
         [ValidateNotNullOrEmpty()]
         [String]
         $Server,
-        [Parameter(ParameterSetName = "Specified")]
+        [Parameter(ParameterSetName = 'Specified')]
         [ValidateNotNullOrEmpty()]
         [String]
         $Port
     )
 
-    Write-Verbose -Message "Starting speed test."
+    Write-Verbose -Message 'Starting speed test.'
 
     Install-ChocolateyGetProvider
     Install-iPerf3
@@ -73,14 +73,14 @@ function Invoke-SpeedTest {
     $defaultPort = '5201'
     $config = Get-SpeedTestConfig -ErrorAction 'SilentlyContinue'
     $command = "iperf3.exe "
-    $usedServer = ""
-    $usedPort = ""
+    $usedServer = ''
+    $usedPort = ''
 
     switch ($PSCmdlet.ParameterSetName) {
-        "Internet" {
-            Write-Verbose -Message "Defaulting to stored Internet speed test server settings."
+        'Internet' {
+            Write-Verbose -Message 'Defaulting to stored Internet speed test server settings.'
             if (!($config.DefaultInternetServer)) {
-                throw "No default Internet server configured - run Set-SpeedTestConfig."
+                throw 'No default Internet server configured - run Set-SpeedTestConfig.'
             } else {
                 $usedServer = $config.DefaultInternetServer
                 $command = $command + "-c $usedServer "
@@ -94,10 +94,10 @@ function Invoke-SpeedTest {
             }
             break
         }
-        "Local" {
-            Write-Verbose -Message "Defaulting to stored Local speed test server settings."
+        'Local' {
+            Write-Verbose -Message 'Defaulting to stored Local speed test server settings.'
             if (!($config.DefaultLocalServer)) {
-                throw "No default Local server configured - run Set-SpeedTestConfig."
+                throw 'No default Local server configured - run Set-SpeedTestConfig.'
             } else {
                 $usedServer = $config.DefaultLocalServer
                 $command = $command + "-c $usedServer "
@@ -111,7 +111,7 @@ function Invoke-SpeedTest {
             }
             break
         }
-        "Specified" {
+        'Specified' {
             Write-Verbose -Message "Server: $Server and port: $Port specified manually."
             $usedServer = $Server
             $command = $command + "-c $usedServer "
@@ -125,7 +125,7 @@ function Invoke-SpeedTest {
             break
         }
         Default {
-            Write-Error -Message "ParameterSet not identified."
+            Write-Error -Message 'ParameterSet not identified.'
         }
     }
 
@@ -141,7 +141,7 @@ function Invoke-SpeedTest {
         $megabitsPerSecSent = 0
         $megabitsPerSecReceived = 0
     } else {
-        Write-Verbose -Message "Speed test successful; calculating mbps and returning PSCustomObject."
+        Write-Verbose -Message 'Speed test successful; calculating mbps and returning PSCustomObject.'
         $megabitsPerSecSent = (($resultsPS.end.sum_sent.bits_per_second) / 1000000.0).ToInt32($null)
         $megabitsPerSecReceived = (($resultsPS.end.sum_received.bits_per_second) / 1000000.0).ToInt32($null)
     }

@@ -17,7 +17,7 @@ function Set-iPerf3Task {
         Set-iPerf3Task -Port "5201"
     #>
     
-    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "Medium")]
+    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = 'Medium')]
     Param(
         [Parameter(Mandatory = $true, Position = 0)]
         [ValidateNotNullOrEmpty()]
@@ -27,7 +27,7 @@ function Set-iPerf3Task {
         $PassThru
     )
 
-    Write-Verbose -Message "Gathering scheduled task settings."
+    Write-Verbose -Message 'Gathering scheduled task settings.'
     $actionParams = @{
         Execute  = (Get-Command -Name 'iperf3.exe' | Select-Object -ExpandProperty 'Source');
         Argument = "-s -D -p $Port";
@@ -35,7 +35,7 @@ function Set-iPerf3Task {
 
     $taskAction = New-ScheduledTaskAction @actionParams
     $taskTrigger = New-ScheduledTaskTrigger -AtStartup
-    $taskPrincipal = New-ScheduledTaskPrincipal -GroupId "BUILTIN\Administrators" -RunLevel Highest
+    $taskPrincipal = New-ScheduledTaskPrincipal -GroupId 'BUILTIN\Administrators' -RunLevel Highest
     $taskSettings = New-ScheduledTaskSettingsSet
     
     $taskParams = @{
@@ -49,8 +49,9 @@ function Set-iPerf3Task {
 
     $task = New-ScheduledTask @taskParams
 
-    if ($PSCmdlet.ShouldProcess("iperf3 Server Scheduled Task", "Register-ScheduledTask")) {
-        Register-ScheduledTask -InputObject $task -TaskName 'iPerf3 Server' -ErrorAction 'SilentlyContinue' | Out-Null
+    if ($PSCmdlet.ShouldProcess('iperf3 Server Scheduled Task', 'Register-ScheduledTask')) {
+        Register-ScheduledTask -InputObject $task -TaskName 'iPerf3 Server' -ErrorAction 'SilentlyContinue' |
+            Out-Null
     }
 
     $toReturn = Get-ScheduledTask -TaskName 'iPerf3 Server' -ErrorAction 'SilentlyContinue'
@@ -59,7 +60,7 @@ function Set-iPerf3Task {
         Start-ScheduledTask -TaskName 'iPerf3 Server'
         Write-Verbose -Message 'Scheduled task for iPerf3 server registered and started.'
     } else {
-        throw "Scheduled task for iPerf3 server was not registered. Message: {0}" -f $error[0].Exception.message
+        throw 'Scheduled task for iPerf3 server was not registered. Message: {0}' -f $error[0].Exception.message
     }
 
     if ($PassThru) {

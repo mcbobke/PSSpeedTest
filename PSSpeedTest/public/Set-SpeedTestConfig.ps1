@@ -65,13 +65,13 @@ function Set-SpeedTestConfig {
     )
 
     try {
-        Write-Verbose -Message "Trying Get-SpeedTestConfig before Set-SpeedTestConfig."
-        $config = Get-Content -Path "$PSScriptRoot\config.json" -ErrorAction "Stop" |
+        Write-Verbose -Message 'Trying Get-SpeedTestConfig before Set-SpeedTestConfig.'
+        $config = Get-Content -Path "$PSScriptRoot\config.json" -ErrorAction 'Stop' |
             ConvertFrom-Json
-        Write-Verbose -Message "Stored config.json found."
+        Write-Verbose -Message 'Stored config.json found.'
     } catch {
-        Write-Verbose -Message "No configuration found - starting with empty configuration."
-        $jsonString = @"
+        Write-Verbose -Message 'No configuration found - starting with empty configuration.'
+        $jsonString = @'
 {   
     "defaultLocalServer" : {
         "defaultServer" : "",
@@ -82,16 +82,17 @@ function Set-SpeedTestConfig {
         "defaultPort"   : ""
     }
 }
-"@
-        $config = $jsonString | ConvertFrom-Json
+'@
+        $config = $jsonString |
+            ConvertFrom-Json
     }
 
     # Detailed parameter validation against current configuration
     if ($InternetPort -and (!($InternetServer)) -and (!($config.defaultInternetServer.defaultServer))) {
-        throw "Cannot set an Internet port with an empty InternetServer setting."
+        throw 'Cannot set an Internet port with an empty InternetServer setting.'
     }
     if ($LocalPort -and (!($LocalServer)) -and (!($config.defaultLocalServer.defaultServer))) {
-        throw "Cannot set a Local port with an empty LocalServer setting."
+        throw 'Cannot set a Local port with an empty LocalServer setting.'
     }
 
     if ($InternetServer) {$config.defaultInternetServer.defaultServer = $InternetServer}
@@ -99,8 +100,8 @@ function Set-SpeedTestConfig {
     if ($LocalServer) {$config.defaultLocalServer.defaultServer = $LocalServer}
     if ($LocalPort) {$config.defaultLocalServer.defaultPort = $LocalPort}
 
-    Write-Verbose -Message "Setting config.json."
+    Write-Verbose -Message 'Setting config.json.'
     $config |
         ConvertTo-Json |
-        Set-Content -Path "$PSScriptRoot\config.json"
+            Set-Content -Path "$PSScriptRoot\config.json"
 }
