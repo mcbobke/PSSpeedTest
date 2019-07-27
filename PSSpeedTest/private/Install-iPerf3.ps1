@@ -16,14 +16,14 @@ function Install-iPerf3 {
         Install-iPerf3 -PassThru
     #>
     
-    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "Medium")]
+    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = 'Medium')]
     Param (
         [Switch]
         $PassThru
     )
 
     try {
-        Write-Verbose -Message "Checking for existing iperf3 package."
+        Write-Verbose -Message 'Checking for existing iperf3 package.'
         Import-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'Stop'
         $toReturn = Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -Force -ErrorAction 'SilentlyContinue'
 
@@ -56,15 +56,16 @@ function Install-iPerf3 {
         ErrorAction  = 'SilentlyContinue';
         Confirm      = $false;
     }
-    if ($PSCmdlet.ShouldProcess($PackageParams['Name'], "Install-Package")) {
-        Install-Package @PackageParams | Out-Null
+    if ($PSCmdlet.ShouldProcess($PackageParams['Name'], 'Install-Package')) {
+        Install-Package @PackageParams |
+            Out-Null
     }
 
     $toReturn = Get-Package -Name 'iperf3' -ProviderName 'ChocolateyGet' -ErrorAction 'SilentlyContinue'
     if ($toReturn) {
         Write-Verbose -Message 'iPerf3 package installed.'
     } else {
-        throw "iPerf3 failed to install or was not installed. Message: {0}" -f $error[0].Exception.message
+        throw 'iPerf3 failed to install or was not installed. Message: {0}' -f $error[0].Exception.message
     }
 
     if ($PassThru) {

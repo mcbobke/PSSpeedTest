@@ -10,7 +10,7 @@ function Test-Administrator {
         Test-Administrator
     #>
 
-    Write-Verbose -Message "Testing for administrative rights."
+    Write-Verbose -Message 'Testing for administrative rights.'
     $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
     $principal = New-Object System.Security.Principal.WindowsPrincipal($identity)
     $admin = [System.Security.Principal.WindowsBuiltInRole]::Administrator

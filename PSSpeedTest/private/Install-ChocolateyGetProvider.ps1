@@ -16,13 +16,13 @@ function Install-ChocolateyGetProvider {
         Install-ChocolateyGetProvider -PassThru
     #>
     
-    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "Medium")]
+    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = 'Medium')]
     Param (
         [Switch]
         $PassThru
     )
 
-    Write-Verbose -Message "Checking for existence of ChocolateyGet provider."
+    Write-Verbose -Message 'Checking for existence of ChocolateyGet provider.'
     $toReturn = Get-PackageProvider -Name 'ChocolateyGet' -ErrorAction 'SilentlyContinue'
     if ($toReturn) {
         Write-Verbose -Message 'Chocolatey package provider/source already installed.'
@@ -42,7 +42,7 @@ function Install-ChocolateyGetProvider {
     }
 
     Write-Verbose -Message 'Installing ChocolateyGet PackageProvider as it was not found.'
-    if ($PSCmdlet.ShouldProcess($PackageProviderParams['Name'], "Install-PackageProvider")) {
+    if ($PSCmdlet.ShouldProcess($PackageProviderParams['Name'], 'Install-PackageProvider')) {
         Install-PackageProvider @PackageProviderParams | Out-Null
     }
     
@@ -50,7 +50,7 @@ function Install-ChocolateyGetProvider {
     if ($toReturn) {
         Write-Verbose -Message 'Chocolatey package provider/source successfully installed.'
     } else {
-        throw "ChocolateyGet failed to install or was not installed. Message: {0}" -f $error[0].Exception.message
+        throw 'ChocolateyGet failed to install or was not installed. Message: {0}' -f $error[0].Exception.message
     }
 
     if ($PassThru) {

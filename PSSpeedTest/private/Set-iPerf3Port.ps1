@@ -11,16 +11,16 @@ function Set-iPerf3Port {
         The port that iPerf3 will listen on.
 
         .PARAMETER PassThru
-        Returns the objects returned by "New-NetFirewallRule" for both the inbound and outbound rules, in an array.
+        Returns the objects returned by 'New-NetFirewallRule' for both the inbound and outbound rules, in an array.
 
         .EXAMPLE
-        Set-iPerf3Port -Port "5201"
+        Set-iPerf3Port -Port '5201'
 
         .EXAMPLE
-        Set-iPerf3Port -Port "5201" -PassThru
+        Set-iPerf3Port -Port '5201' -PassThru
     #>
     
-    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = "Medium")]
+    [CmdletBinding(SupportsShouldProcess = $True, ConfirmImpact = 'Medium')]
     Param(
         [Parameter(Mandatory = $true, Position = 0)]
         [ValidateNotNullOrEmpty()]
@@ -30,27 +30,27 @@ function Set-iPerf3Port {
         $PassThru
     )
 
-    Write-Verbose -Message "Setting inbound and outbound iperf3 firewall rules."
+    Write-Verbose -Message 'Setting inbound and outbound iperf3 firewall rules.'
 
     $FirewallInboundParams = @{
-        DisplayName = "iPerf3 Server Inbound TCP Rule";
-        Direction   = "Inbound";
+        DisplayName = 'iPerf3 Server Inbound TCP Rule';
+        Direction   = 'Inbound';
         LocalPort   = $Port;
-        Protocol    = "TCP";
-        Action      = "Allow";
-        ErrorAction = "SilentlyContinue";
+        Protocol    = 'TCP';
+        Action      = 'Allow';
+        ErrorAction = 'SilentlyContinue';
     }
 
     $FirewallOutboundParams = @{
-        DisplayName = "iPerf3 Server Outbound TCP Rule";
-        Direction   = "Outbound";
+        DisplayName = 'iPerf3 Server Outbound TCP Rule';
+        Direction   = 'Outbound';
         LocalPort   = $Port;
-        Protocol    = "TCP";
-        Action      = "Allow";
-        ErrorAction = "SilentlyContinue";
+        Protocol    = 'TCP';
+        Action      = 'Allow';
+        ErrorAction = 'SilentlyContinue';
     }
 
-    if ($PSCmdlet.ShouldProcess("iperf3 Inbound/Outbound Firewall Rules", "New-NetFirewallRule")) {
+    if ($PSCmdlet.ShouldProcess('iperf3 Inbound/Outbound Firewall Rules', 'New-NetFirewallRule')) {
         $inboundResult = New-NetFirewallRule @FirewallInboundParams
         $outboundResult = New-NetFirewallRule @FirewallOutboundParams
     }
@@ -58,7 +58,7 @@ function Set-iPerf3Port {
     if ($inboundResult -and $outboundResult) {
         Write-Verbose -Message 'iPerf3 server port firewall rules set.'
     } else {
-        throw "iPerf3 server port firewall rules could not be set. Message: {0}" -f $error[0].Exception.message
+        throw 'iPerf3 server port firewall rules could not be set. Message: {0}' -f $error[0].Exception.message
     }
 
     if ($PassThru) {
